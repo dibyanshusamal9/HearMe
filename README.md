@@ -40,14 +40,21 @@ npm run demo
 | `http://localhost:8080/?seat=23C#/ife` | Seatback (IFE) screen. |
 | `https://<laptop-ip>:8443/seats` | Printable seat-pocket cards: a QR code per seat, plus a picture card for passengers without a phone. |
 
-> **Certificate warning on phones.** Browsers only allow the microphone over HTTPS, so the hub uses a self-signed certificate (created in `apps/hub/.cert`). On the phone, choose *Advanced → Continue*. Taps and typing also work over plain HTTP.
+> **Phones and HTTPS.** Browsers only allow the microphone on HTTPS pages.
+> - **With `mkcert` installed** (`brew install mkcert`): the hub uses a certificate from a local CA. On the demo phone, open `http://<laptop-ip>:8080/trust` once and install the cabin certificate; after that there is no warning. The hub never adds anything to the laptop's trust store, so it does not run `mkcert -install`. Use a test phone, and remove the certificate after the event.
+> - **Without `mkcert`:** the certificate is self-signed, so choose *Advanced → Continue* once on the phone.
+>
+> Taps and typing also work over plain HTTP.
 
 Options:
 - `--no-ai` starts without speech (taps and typing still work).
 - `--rebuild` forces a fresh build.
 - `--no-open` does not open a browser.
 
-On the stage, click the **Whisper** chip to switch live between *small*, which is more accurate, and *base*, which is about 4× faster.
+On the stage:
+- **Live demo** runs the whole story in the real apps, with captions. Sharda's Hindi request plays out loud and goes into the phone's microphone; Whisper, matching, the crew reply and Care Mode then happen for real. Stop it any time, then let the judges try it with the QR code.
+- **Recorded demo** is the offline backup.
+- The **Whisper** chip switches between *small* (accurate) and *base* (about 4× faster).
 
 ---
 
@@ -162,11 +169,12 @@ Notes on these numbers:
 - The screens, replies and captions for pack languages are still in English.
 
 **Other results:**
+- **Start-up:** the hub warms the models up once when it starts (2 s). The first spoken request then takes 4.4 s instead of 6.0 s; later requests take about 3.5 s.
 - **Crew voice replies:** 14 of 14 spoken Japanese phrasings matched the right verified reply. Each takes about 1.7 s.
 - **Noise reduction:** tested and not used. Spectral subtraction before Whisper did not help: 65% at 0 dB with it, against 68% without.
 - **Accessibility:** axe-core found no WCAG 2.1 A or AA violations on the launcher, stage, crew console, seatback, phone app or seat cards.
 
-> These numbers come from synthetic voices and synthetic noise, not from real passengers in a real cabin. They show that the pipeline works and how it degrades with noise; they are not a field result. The design prefers asking with pictures to guessing.
+> These numbers come from synthetic voices and synthetic noise, not from real passengers in a real cabin. They show that the pipeline works and how it degrades with noise; they are not a field result. The design prefers asking with pictures to guessing. To get real-voice numbers, use the **voice lab** (`http://localhost:8080/#/voicelab`): people say the requests shown, optionally with cabin noise playing from the laptop. Only the text Whisper heard is saved, never the audio. `npm run voicelab -w @hearme/hub` sums up the results.
 
 ---
 
@@ -212,6 +220,7 @@ npm run record-demo    # re-record docs/demo.mp4 (needs Google Chrome, ffmpeg, m
 npm run train -w @hearme/hub      # retrain the need classifier (minutes, on the laptop CPU)
 npm run rescore -w @hearme/hub    # re-score saved Whisper transcripts after matcher changes (seconds)
 npm run zeroshot -w @hearme/hub   # Bengali / Tamil / Tagalog check
+npm run voicelab -w @hearme/hub   # real-voice results collected at #/voicelab
 npm run add-language -w @hearme/hub -- bn   # add a language from data/languages/<code>.json, retrain, measure
 npm run chart -w @hearme/hub      # redraw docs/results.svg
 npm run a11y -w @hearme/hub       # axe-core accessibility check of every screen

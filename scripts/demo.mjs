@@ -71,6 +71,8 @@ async function preflight() {
   ];
   ok(!!lan, lan ? `Wi-Fi address ${lan.address}: phones open https://${lan.address}:8443/mobile/` : 'no Wi-Fi/LAN address (phones cannot join; the stage still works)', 'connect to a network or a phone hotspot');
   ok(ffmpeg, 'ffmpeg (only for native-app audio formats)', 'brew install ffmpeg');
+  const mkcert = spawnSync('mkcert', ['-CAROOT'], { stdio: 'ignore' }).status === 0;
+  ok(mkcert, mkcert ? 'mkcert: phones trust the hub after a one-time install (open /trust on the phone)' : 'mkcert (optional): without it phones show a certificate warning once', 'brew install mkcert');
   ok(existsSync(hub('.cert')), 'HTTPS certificate for phones', 'created on first start');
   const fine = required.every(Boolean);
   console.log(fine ? '\nReady: npm run demo\n' : '\nFix the ✗ lines above, then run the check again.\n');

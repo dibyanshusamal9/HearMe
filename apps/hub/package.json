@@ -17,7 +17,8 @@
     "a11y": "tsx src/scripts/a11y.ts",
     "zeroshot": "tsx src/scripts/zeroshot.ts",
     "chart": "tsx src/scripts/chart.ts",
-    "add-language": "tsx src/scripts/add-language.ts"
+    "add-language": "tsx src/scripts/add-language.ts",
+    "voicelab": "tsx src/scripts/voicelab.ts"
   },
   "dependencies": {
     "@hearme/shared": "*",

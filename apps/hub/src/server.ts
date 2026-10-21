@@ -1,11 +1,12 @@
-import { createReadStream, existsSync, statSync } from 'node:fs';
+import { appendFileSync, createReadStream, existsSync, mkdirSync, readFileSync, statSync } from 'node:fs';
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { extname, join, normalize, resolve } from 'node:path';
+import { dirname, extname, join, normalize, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { LANGUAGES, type HubStatus, type LangCode, type UnderstandResult, type UnderstandTarget } from '@hearme/shared';
 import type { AiEngine } from './ai';
 import { AudioError, decodeAudio, hasFfmpeg } from './audio';
 import { lookupBooking } from './booking';
-import { joinPage, qrSvg, seatCardsPage } from './pages';
+import { joinPage, qrSvg, seatCardsPage, trustPage } from './pages';
 import type { CabinRelay } from './relay';
 
 export interface PublicUrls {
@@ -20,6 +21,8 @@ export interface HandlerOptions {
   relay: CabinRelay;
   urls: () => PublicUrls;
   version: string;
+  /** Public certificate of the local CA when the hub uses mkcert (served at /ca.pem for phones to install). */
+  caPath?: () => string | null;
 }
 
 const MIME: Record<string, string> = {
@@ -81,6 +84,13 @@ function parseTarget(v: unknown): UnderstandTarget {
   return v === 'replies' ? 'replies' : 'needs';
 }
 
+/** Voice-lab results file (text only), read by `npm run voicelab`. */
+const VOICELAB_FILE = fileURLToPath(new URL('../.eval/voicelab.jsonl', import.meta.url));
+function appendVoiceLab(row: object): void {
+  mkdirSync(dirname(VOICELAB_FILE), { recursive: true });
+  appendFileSync(VOICELAB_FILE, `${JSON.stringify(row)}\n`);
+}
+
 export function createHandler(opts: HandlerOptions) {
   const root = resolve(opts.staticDir);
 
@@ -137,6 +147,24 @@ export function createHandler(opts: HandlerOptions) {
       const t0 = Date.now();
       const transcript = await opts.ai.transcribe(samples, lang);
       return json(res, 200, await understandText(transcript, lang, parseTarget(url.searchParams.get('target')), Date.now() - t0));
+    }
+    if (path === '/api/voicelab' && req.method === 'POST') {
+      // Voice lab results: text only (never audio), appended for `npm run voicelab`.
+      let v: Record<string, unknown>;
+      try {
+        v = JSON.parse((await readBody(req, MAX_JSON_BYTES)).toString('utf8')) as Record<string, unknown>;
+      } catch {
+        return json(res, 400, { error: 'invalid JSON' });
+      }
+      const str = (x: unknown, max: number) => (typeof x === 'string' && x.length <= max ? x : null);
+      const lang = parseAnyLang(v.lang);
+      const expected = str(v.expected, 40);
+      const transcript = str(v.transcript, 300);
+      if (!lang || !expected || transcript === null || typeof v.confidence !== 'number' || typeof v.asrMs !== 'number') return json(res, 400, { error: 'invalid result' });
+      const top3 = Array.isArray(v.top3) ? v.top3.filter((x): x is string => typeof x === 'string').slice(0, 3) : [];
+      const row = { at: new Date().toISOString(), lang, expected, transcript, got: str(v.got, 40), top3, confidence: v.confidence, asrMs: v.asrMs, noise: v.noise === true, speaker: str(v.speaker, 8) ?? undefined };
+      appendVoiceLab(row);
+      return json(res, 201, { ok: true });
     }
     if (path === '/api/languages' && req.method === 'GET') {
       return json(res, 200, {
@@ -219,6 +247,16 @@ export function createHandler(opts: HandlerOptions) {
       const urls = opts.urls();
       if (url.pathname === '/join') {
         return send(res, 200, await joinPage(`${urls.base}/mobile/?seat=23C`, `${urls.base}/#/crew`, `${urls.base}/#/stage`), 'text/html; charset=utf-8');
+      }
+      if (url.pathname === '/ca.pem') {
+        // Only the CA's public certificate (rootCA.pem), never its key.
+        const ca = opts.caPath?.();
+        if (!ca || !existsSync(ca)) return send(res, 404, 'This hub uses a self-signed certificate (install mkcert for a trusted one).', 'text/plain');
+        res.setHeader('Content-Disposition', 'attachment; filename="hearme-cabin-ca.pem"');
+        return send(res, 200, readFileSync(ca), 'application/x-x509-ca-cert');
+      }
+      if (url.pathname === '/trust') {
+        return send(res, 200, trustPage(!!opts.caPath?.(), `${urls.base}/mobile/?seat=23C`, urls.lan[0] ? `http://${urls.lan[0]}:8080/ca.pem` : '/ca.pem'), 'text/html; charset=utf-8');
       }
       if (url.pathname === '/seats') {
         const rows = [21, 22, 23, 24, 25, 26];

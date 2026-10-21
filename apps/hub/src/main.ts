@@ -45,7 +45,9 @@ const urls = (): PublicUrls => {
   const host = lan[0] ?? 'localhost';
   return { base: httpsOk ? `https://${host}:${HTTPS_PORT}` : `http://${host}:${HTTP_PORT}`, lan };
 };
-const handler = createHandler({ staticDir: STATIC_DIR, ai, relay, urls, version: VERSION });
+let caPath: string | null = null;
+let certKind: 'mkcert' | 'self-signed' = 'self-signed';
+const handler = createHandler({ staticDir: STATIC_DIR, ai, relay, urls, version: VERSION, caPath: () => caPath });
 const wss = new WebSocketServer({ noServer: true, maxPayload: 64 * 1024 });
 relay.attach(wss);
 
@@ -62,7 +64,9 @@ wire(httpServer);
 httpServer.listen(HTTP_PORT, '0.0.0.0');
 
 try {
-  const { key, cert } = await loadOrCreateCert(lan);
+  const { key, cert, kind, caPath: ca } = await loadOrCreateCert(lan);
+  caPath = ca;
+  certKind = kind;
   const httpsServer = createHttpsServer({ key, cert });
   wire(httpsServer as unknown as ReturnType<typeof createHttpServer>);
   await new Promise<void>((ok, fail) => {
@@ -83,6 +87,7 @@ console.log(`
   Seatback (IFE) http://localhost:${HTTP_PORT}/?seat=23C#/ife
   Phone (LAN)    ${phone}
   Join page      ${urls().base}/join      Seat cards  ${urls().base}/seats
+  Phone setup    ${lan[0] ? `http://${lan[0]}:${HTTP_PORT}/trust` : `http://localhost:${HTTP_PORT}/trust`}  (${certKind === 'mkcert' ? 'install the cabin certificate once: no warning' : 'self-signed: phones warn once'})
 `);
 if (lan.length) console.log(await QRCode.toString(phone, { type: 'terminal', small: true }));
 

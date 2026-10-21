@@ -13,10 +13,11 @@ import {
   type ReplyId,
   type ServerFrame,
 } from '@hearme/shared';
-import { ArrowLeft, ArrowRight, Cpu, Film, Languages, Megaphone, Mic, Monitor, QrCode, RotateCcw, Smartphone, Volume2, VolumeX, WifiOff, X, Zap } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Cpu, Film, Languages, Megaphone, Mic, Monitor, Play, QrCode, RotateCcw, Smartphone, Square, Volume2, VolumeX, WifiOff, X, Zap } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { hubBaseUrl, useHubStatus } from '../common/hub';
 import { CabinNoise } from '../common/sounds';
+import { runLiveDemo } from './liveDemo';
 
 /**
  * Demo stage: the passenger and the crew side by side, with what travels
@@ -100,6 +101,9 @@ export function Stage() {
   const [volume, setVolume] = useState(0.5);
   const [showQr, setShowQr] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
+  const [caption, setCaption] = useState<string | null>(null);
+  const [running, setRunning] = useState(false);
+  const demo = useRef<AbortController | null>(null);
   const noise = useMemo(() => new CabinNoise(), []);
   const crewState = useRef<CrewTabletState | null>(null);
   const [reload, setReload] = useState(0);
@@ -153,6 +157,26 @@ export function Stage() {
     });
     setItems([]);
     setReload((x) => x + 1);
+  };
+
+  const liveDemo = async () => {
+    if (demo.current) {
+      demo.current.abort();
+      return;
+    }
+    const ac = new AbortController();
+    demo.current = ac;
+    setPassenger('phone');
+    setShowQr(false);
+    setRunning(true);
+    try {
+      await runLiveDemo({ caption: setCaption, reset, showQr: () => setShowQr(true), signal: ac.signal });
+    } catch (e) {
+      setCaption(ac.signal.aborted ? null : `Live demo paused: ${(e as Error).message}. Carry on by hand, or play the recorded demo.`);
+    } finally {
+      demo.current = null;
+      setRunning(false);
+    }
   };
 
   const fast = !!status?.asr.model.endsWith('base');
@@ -228,6 +252,9 @@ export function Stage() {
           <button className="stage-btn" onClick={() => setShowQr(!showQr)} aria-expanded={showQr}>
             <QrCode aria-hidden /> Try on your phone
           </button>
+          <button className="stage-btn" onClick={liveDemo} disabled={!ready(status?.asr.state)} title="Runs the whole story live in the real apps, with captions">
+            {running ? <Square aria-hidden /> : <Play aria-hidden />} {running ? 'Stop demo' : 'Live demo'}
+          </button>
           <button className="stage-btn ghost" onClick={() => setShowVideo(true)} title="Recorded run of this demo, for when the room's Wi-Fi fails">
             <Film aria-hidden /> Recorded demo
           </button>
@@ -244,7 +271,9 @@ export function Stage() {
             <b>Scan with your phone camera</b>
             <p>Same Wi-Fi as this laptop. You become seat 23C.</p>
             <code>{phoneUrl}</code>
-            <p className="stage-qr__note">If the browser warns about the certificate, choose Advanced → Continue (the microphone needs HTTPS).</p>
+            <p className="stage-qr__note">
+              First time on this phone: open <code>{status?.urls?.lan[0] ? `http://${status.urls.lan[0]}:8080/trust` : '/trust'}</code> to install the cabin certificate (or choose Advanced → Continue at the warning). The microphone needs HTTPS.
+            </p>
           </div>
         </div>
       )}
@@ -255,6 +284,12 @@ export function Stage() {
           <button className="stage-video__close" onClick={() => setShowVideo(false)} aria-label="Close">
             <X aria-hidden />
           </button>
+        </div>
+      )}
+
+      {caption && (
+        <div className="stage-caption" role="status">
+          {caption}
         </div>
       )}
 

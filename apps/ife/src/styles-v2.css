@@ -1324,3 +1324,195 @@ button.stage-chip:disabled {
   background: transparent;
   border: 1px solid #2a3a5c;
 }
+
+/* Voice lab */
+.vlab {
+  min-height: 100vh;
+  background: #0b1630;
+  color: #e8eefb;
+  display: flex;
+  flex-direction: column;
+}
+.vlab-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 20px;
+  border-bottom: 1px solid #24324d;
+}
+.vlab-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 260px 1fr 260px;
+  gap: 18px;
+  padding: 18px;
+}
+.vlab-panel,
+.vlab-card {
+  background: #111c30;
+  border: 1px solid #24324d;
+  border-radius: 16px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.vlab-panel label {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  color: #9aa8c4;
+}
+.vlab-panel select,
+.vlab-panel input {
+  font: inherit;
+  font-size: 15px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid #2a3a5c;
+  background: #0d1628;
+  color: #fff;
+}
+.vlab-panel h2 {
+  margin: 0;
+  font-size: 16px;
+}
+.vlab-fine {
+  font-size: 12.5px;
+  color: #9aa8c4;
+  margin: 0;
+}
+.vlab-card {
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+}
+.vlab-ask {
+  margin: 0;
+  color: #9aa8c4;
+}
+.vlab-need {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  color: #ff8a65;
+}
+.vlab-need b {
+  display: block;
+  font-size: 34px;
+  color: #fff;
+}
+.vlab-need span {
+  color: #9aa8c4;
+}
+.vlab-mic {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 16px 28px;
+  border-radius: 999px;
+  border: 0;
+  background: #ff8a65;
+  color: #0b1630;
+  cursor: pointer;
+}
+.vlab-mic.recording {
+  background: #fff;
+  box-shadow: 0 0 0 6px rgba(255, 138, 101, 0.35);
+}
+.vlab-mic:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+.vlab-error {
+  color: #ff9b9b;
+  margin: 0;
+}
+.vlab-result {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  text-align: left;
+  padding: 12px 14px;
+  border-radius: 12px;
+  max-width: 560px;
+}
+.vlab-result.ok {
+  background: rgba(46, 160, 98, 0.18);
+}
+.vlab-result.bad {
+  background: rgba(220, 70, 70, 0.18);
+}
+.vlab-result q {
+  display: block;
+  font-size: 17px;
+  color: #fff;
+}
+.vlab-result span {
+  font-size: 13px;
+  color: #c9d4ea;
+}
+.vlab-tally {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px 12px;
+  margin: 0;
+}
+.vlab-tally dd {
+  margin: 0;
+  font-weight: 800;
+  color: #fff;
+}
+@media (max-width: 900px) {
+  .vlab-body {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Demo stage: live demo captions and tap marks */
+.stage-caption {
+  position: fixed;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  z-index: 40;
+  max-width: min(760px, 92vw);
+  padding: 14px 24px;
+  border-radius: 14px;
+  background: rgba(10, 18, 36, 0.94);
+  color: #fff;
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+.stage-tap {
+  position: fixed;
+  z-index: 45;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid #ff8a65;
+  background: rgba(255, 138, 101, 0.4);
+  pointer-events: none;
+  animation: stage-tap 0.7s ease-out forwards;
+}
+@keyframes stage-tap {
+  to {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stage-tap {
+    animation: none;
+  }
+}
+.stage-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}

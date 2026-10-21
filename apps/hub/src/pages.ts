@@ -91,3 +91,26 @@ export async function joinPage(phoneUrl: string, crewUrl: string, stageUrl: stri
   <p><a href="${esc(crewUrl)}">Crew console</a> · <a href="${esc(stageUrl)}">Demo stage</a> · <a href="/seats">Seat cards</a></p></div>
   </main></body></html>`;
 }
+
+/** How to make a phone trust the hub (mkcert's local CA), so the microphone works without a warning. */
+export function trustPage(trusted: boolean, phoneUrl: string, caUrl: string): string {
+  const body = trusted
+    ? `<p>Do this once on the <b>demo phone</b>, then the phone app opens with no warning.</p>
+       <p><a class="btn" href="${caUrl}">Download the cabin certificate</a></p>
+       <h2>iPhone</h2>
+       <ol><li>Open this page in <b>Safari</b> and download the certificate. Choose <b>Allow</b>.</li>
+       <li>Settings → <b>Profile Downloaded</b> → Install.</li>
+       <li>Settings → General → About → <b>Certificate Trust Settings</b> → switch on <b>mkcert</b>.</li></ol>
+       <h2>Android</h2>
+       <ol><li>Download the certificate.</li>
+       <li>Settings → Security → Encryption &amp; credentials → <b>Install a certificate</b> → CA certificate → choose the file.</li></ol>
+       <p class="warn"><b>Use a test phone only, and remove the certificate after the demo</b> (iPhone: Settings → General → VPN &amp; Device Management; Android: Trusted credentials → User). A phone that trusts it would also trust any site signed with this laptop's key.</p>
+       <p>Then open: <a href="${phoneUrl}">${phoneUrl}</a></p>`
+    : `<p>This hub uses a self-signed certificate: phones show a warning once (Advanced → Continue). For no warning, install <code>mkcert</code> on the laptop (<code>brew install mkcert</code>) and restart the hub.</p>
+       <p>Then open: <a href="${phoneUrl}">${phoneUrl}</a></p>`;
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HearMe · trust the cabin hub</title>
+<style>body{font:17px/1.5 system-ui,sans-serif;max-width:640px;margin:24px auto;padding:0 16px;color:#13233a}h1{font-size:26px}h2{font-size:18px;margin-top:22px}
+.btn{display:inline-block;background:#ff8a65;color:#0b1630;font-weight:700;padding:12px 18px;border-radius:999px;text-decoration:none}.warn{background:#fff4e5;padding:12px;border-radius:10px}li{margin:6px 0}</style>
+</head><body><h1>Use HearMe on a phone without a warning</h1>${body}</body></html>`;
+}
