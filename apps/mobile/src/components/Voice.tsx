@@ -1,6 +1,8 @@
 import { decide, defaultMatcher, matchOnHub, translator, type LangCode, type MatchResult, type RequestSource } from '@hearme/shared';
 import { MicUnavailableError } from '@hearme/shared/web';
+import Check from 'lucide-react-native/icons/check';
 import Mic from 'lucide-react-native/icons/mic';
+import Sparkles from 'lucide-react-native/icons/sparkles';
 import Square from 'lucide-react-native/icons/square';
 import { useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, ActivityIndicator, Platform, Pressable, Text, View } from 'react-native';
@@ -131,6 +133,34 @@ export function HoldToSpeak({ lang }: { lang: LangCode }) {
     };
   });
 
+  // Seconds since the recording was sent: shows the passenger something is happening.
+  const [waited, setWaited] = useState(0);
+  useEffect(() => {
+    if (phase !== 'processing') return;
+    const t0 = Date.now();
+    setWaited(0);
+    const timer = setInterval(() => setWaited((Date.now() - t0) / 1000), 100);
+    return () => clearInterval(timer);
+  }, [phase]);
+  const step = (Icon: typeof Mic, state: 'done' | 'active' | 'todo', key: string) => (
+    <View
+      key={key}
+      style={{
+        width: 34,
+        height: 34,
+        borderRadius: 17,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: state === 'done' ? th.p.primary : state === 'active' ? th.p.primarySoft : th.p.surface,
+        borderWidth: 2,
+        borderColor: state === 'todo' ? th.p.border : th.p.primary,
+      }}
+    >
+      <Icon color={state === 'done' ? '#fff' : state === 'active' ? th.p.primary : th.p.textMuted} size={18} />
+    </View>
+  );
+  const line = (done: boolean, key: string) => <View key={key} style={{ flex: 1, height: 3, borderRadius: 2, backgroundColor: done ? th.p.primary : th.p.border }} />;
+
   const bars = Array.from({ length: 14 }, (_, i) => {
     const level = Math.max(0.15, Math.min(1, ((db - 70) / 18) * (0.55 + 0.45 * Math.abs(Math.sin(i * 1.7 + db)))));
     return level;
@@ -150,11 +180,22 @@ export function HoldToSpeak({ lang }: { lang: LangCode }) {
               {phase === 'processing' ? <ActivityIndicator color={th.p.primary} /> : <Mic color={th.p.primary} size={20} />}
               <T bold>{phase === 'listening' ? tr('speech.listening') : tr('speech.processing')}</T>
             </View>
+            {phase === 'processing' && <Text style={{ color: th.p.textMuted, fontWeight: '700', fontSize: th.fs(14) }}>{waited.toFixed(1)} s</Text>}
             {phase === 'listening' && speech.simulated && (
               <View style={{ backgroundColor: th.p.warningSoft, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 2 }}>
                 <Text style={{ color: th.p.warning, fontWeight: '700', fontSize: th.fs(13) }}>{db} dB</Text>
               </View>
             )}
+          </View>
+          {/* Heard → understanding → ready: the three steps, so a few seconds of waiting reads as progress. */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }} importantForAccessibility="no-hide-descendants">
+            {[
+              step(Mic, phase === 'listening' ? 'active' : 'done', 'mic'),
+              line(phase === 'processing', 'l1'),
+              step(Sparkles, phase === 'processing' ? 'active' : 'todo', 'ai'),
+              line(false, 'l2'),
+              step(Check, 'todo', 'ok'),
+            ]}
           </View>
           {phase === 'listening' && !th.reduceMotion && (
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, height: 36 }} importantForAccessibility="no-hide-descendants">

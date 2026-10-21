@@ -67,7 +67,8 @@ export class MockSpeechRecognizer implements SpeechRecognizer {
 
 /** Text-to-speech adapter (crew reply read aloud in the passenger's earphones). */
 export interface Speaker {
-  available(): boolean;
+  /** Whether replies can be read aloud, in this language when one is given (the device needs a voice for it). */
+  available(bcp47?: string): boolean;
   speak(text: string, bcp47: string): void;
   stop(): void;
 }

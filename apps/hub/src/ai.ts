@@ -169,10 +169,27 @@ export class AiEngine {
     this.status.asr.state = 'loading';
     try {
       this.asr = await (this.options.loadAsr ?? (() => createWhisper(this.options.asrSize, this.options.threads)))();
+      if (process.env.HEARME_NO_WARMUP !== '1') await this.warmUp();
       this.status.asr.state = 'ready';
     } catch (e) {
       this.status.asr = { ...this.status.asr, state: 'error', error: String(e) };
     }
+  }
+
+  /** Time the last warm-up took (ms), for the start-up banner. */
+  warmupMs: number | null = null;
+
+  /**
+   * One throwaway run of each model before the first passenger: ONNX does
+   * one-off work (graph optimisation, memory allocation) on its first call.
+   */
+  private async warmUp(): Promise<void> {
+    const t0 = Date.now();
+    const tone = Float32Array.from({ length: 16000 }, (_, i) => 0.05 * Math.sin(i / 7));
+    await this.asr?.transcribe(tone, 'en').catch(() => '');
+    await this.needs?.match('water').catch(() => undefined);
+    await this.replies?.match('すぐお持ちします').catch(() => undefined);
+    this.warmupMs = Date.now() - t0;
   }
 
   get canTranscribe(): boolean {

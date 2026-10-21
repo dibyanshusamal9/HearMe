@@ -49,7 +49,7 @@ export function ReplyDialog({ session, lang, requestId, speaker }: { session: Pa
   const prefs = useSession(session, (s) => s.prefs);
   const tr = translator(lang);
   const text = r?.reply ? getReply(r.reply.replyId).text[lang] : '';
-  const voice = prefs.replyChannels.includes('voice') && speaker.available();
+  const voice = prefs.replyChannels.includes('voice') && speaker.available(languageInfo(lang).bcp47);
   useEffect(() => {
     if (voice && text) speaker.speak(text, languageInfo(lang).bcp47);
   }, [voice, text, lang, speaker]);

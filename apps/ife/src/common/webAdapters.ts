@@ -3,12 +3,17 @@ import type { Speaker } from '@hearme/shared';
 /**
  * Text-to-speech through the browser's Web Speech API. On a real seatback this
  * would route to the passenger's headphone jack via the IFE platform's audio API
- * (not integrated here). Many browsers ship offline voices; if none exists for
- * the language, `available()` still returns true and the browser may stay silent,
- * so text is always shown as well.
+ * (not integrated here). Many browsers ship offline voices; given a language,
+ * `available()` checks one exists (when the voice list has loaded), and text
+ * is always shown as well.
  */
 export const browserSpeaker: Speaker = {
-  available: () => typeof window !== 'undefined' && 'speechSynthesis' in window,
+  available: (bcp47?: string) => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return false;
+    const voices = window.speechSynthesis.getVoices();
+    if (!bcp47 || voices.length === 0) return true;
+    return voices.some((v) => v.lang.toLowerCase().replace('_', '-').startsWith(bcp47.slice(0, 2).toLowerCase()));
+  },
   speak(text, bcp47) {
     if (!this.available()) return;
     window.speechSynthesis.cancel();

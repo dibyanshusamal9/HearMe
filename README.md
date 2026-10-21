@@ -182,6 +182,22 @@ Notes on these numbers:
 
 ---
 
+## Cost and business model
+
+These are working assumptions for a pilot conversation, not quotes. Slide 7 of the [results deck](docs/deck/HearMe_Deck_Results.pdf) shows the same thing.
+
+| | Assumption |
+| --- | --- |
+| Hardware | None new: passengers' own phones, the crew's existing tablet (or a small cabin PC per aircraft), printed seat cards |
+| Running cost | No internet, no cloud bill, no per-request AI fees: everything runs on board |
+| Price | About $150 per aircraft per month for software, updates, languages, the crew dashboard and flight reports. A 100-aircraft airline would pay about $180k a year |
+| New language | A data file (draft it with `add-language --draft`) plus a one-off native review. No code |
+| Value to prove in a 3-month pilot | Answer time, understood first time, repeats avoided, medical response time, passenger satisfaction |
+
+Questions judges ask, with short honest answers: [docs/judges-qa.md](docs/judges-qa.md).
+
+---
+
 ## Development
 
 ```bash

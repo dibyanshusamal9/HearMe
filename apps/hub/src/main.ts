@@ -93,6 +93,7 @@ if (process.env.HEARME_NO_AI === '1') {
   ai.start().then(() => {
     const s = ai.status;
     console.log(`  Meaning model: ${s.embed.state}${s.embed.error ? ` (${s.embed.error})` : ''}`);
+    if (ai.warmupMs !== null) console.log(`  Warmed up in ${(ai.warmupMs / 1000).toFixed(1)} s, so the first passenger does not pay for it`);
     console.log(`  Speech model:  ${s.asr.state}${s.asr.error ? ` (${s.asr.error}) — run: npm run models` : ''}\n`);
   });
 }

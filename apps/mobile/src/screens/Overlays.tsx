@@ -405,6 +405,11 @@ function ReplyModal({ lang }: { lang: LangCode }) {
               {text}
             </T>
           </Card>
+          {voice && !speaker.available(languageInfo(lang).bcp47) && (
+            <T muted role="status">
+              {tr('reply.noVoice')}
+            </T>
+          )}
           {need && (
             <View style={{ alignSelf: 'center', backgroundColor: th.p.successSoft, borderRadius: th.radius.lg, padding: th.space.lg }}>
               <NeedIcon name={need.private ? 'hand-helping' : need.icon} color={th.p.success} size={th.fs(56)} />

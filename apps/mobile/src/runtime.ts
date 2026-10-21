@@ -93,7 +93,14 @@ export function currentSpeech(): SpeechRecognizer {
 
 /** On-device text-to-speech (expo-speech). Uses the phone's installed voices, which work offline on most devices. */
 export const speaker: Speaker = {
-  available: () => true,
+  // On the web, the browser reads aloud with the phone's own voices; a phone may have none for Hindi or Thai.
+  available: (bcp47) => {
+    const synth = Platform.OS === 'web' ? (globalThis as { speechSynthesis?: SpeechSynthesis }).speechSynthesis : undefined;
+    const voices = synth?.getVoices() ?? [];
+    if (!bcp47 || voices.length === 0) return true; // native, or voices not loaded yet: assume yes
+    const want = bcp47.slice(0, 2).toLowerCase();
+    return voices.some((v) => v.lang.toLowerCase().replace('_', '-').startsWith(want));
+  },
   speak: (text, bcp47) => {
     Speech.stop();
     Speech.speak(text, { language: bcp47, rate: 0.9 });

@@ -296,6 +296,14 @@ const S = {
   },
   'reply.from': { en: 'Cabin crew', hi: 'केबिन क्रू', ja: '客室乗務員', th: 'ลูกเรือ', id: 'Awak kabin', vi: 'Tiếp viên' },
   'reply.playAgain': { en: 'Play again', hi: 'फिर से सुनें', ja: 'もう一度聞く', th: 'ฟังอีกครั้ง', id: 'Putar lagi', vi: 'Nghe lại' },
+  'reply.noVoice': {
+    en: 'This phone has no voice for your language, so the reply is shown as text.',
+    hi: 'इस फ़ोन में आपकी भाषा की आवाज़ नहीं है, इसलिए जवाब लिखकर दिखाया गया है।',
+    ja: 'この端末にはあなたの言語の音声がないため、返信は文字で表示しています。',
+    th: 'โทรศัพท์นี้ไม่มีเสียงภาษาของคุณ จึงแสดงคำตอบเป็นข้อความ',
+    id: 'Ponsel ini tidak punya suara untuk bahasa Anda, jadi balasan ditampilkan sebagai teks.',
+    vi: 'Điện thoại này không có giọng đọc cho ngôn ngữ của bạn, nên câu trả lời được hiển thị bằng chữ.',
+  },
   'card.title': { en: 'Show to crew', hi: 'क्रू को दिखाएँ', ja: '乗務員に見せる', th: 'แสดงให้ลูกเรือดู', id: 'Tunjukkan ke awak', vi: 'Cho tiếp viên xem' },
   'card.hint': {
     en: 'Point at a picture and show the screen to a crew member. Works with no connection.',
