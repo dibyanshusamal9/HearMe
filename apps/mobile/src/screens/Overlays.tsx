@@ -1,5 +1,6 @@
 import {
   CATEGORIES,
+  CONFIDENCE_THRESHOLD,
   CATEGORY_LABELS,
   CREW_LANG,
   getNeed,
@@ -39,6 +40,7 @@ export function Overlays({ lang, seat }: { lang: LangCode; seat: string }) {
   return (
     <>
       {o?.kind === 'review' && <ReviewSheet lang={lang} o={o} />}
+      {o?.kind === 'reviewMany' && <ReviewManySheet lang={lang} o={o} />}
       {o?.kind === 'picker' && <PickerSheet lang={lang} category={o.category} />}
       {o?.kind === 'ask' && <AskSheet lang={lang} o={o} />}
       {o?.kind === 'typed' && <TypedSheet lang={lang} />}
@@ -46,6 +48,78 @@ export function Overlays({ lang, seat }: { lang: LangCode; seat: string }) {
       {o?.kind === 'care' && <CareSheet lang={lang} />}
       <ReplyModal lang={lang} />
     </>
+  );
+}
+
+/** Several requests understood from one sentence: each can be unticked; refused ones are shown crossed out. */
+function ReviewManySheet({ lang, o }: { lang: LangCode; o: Extract<Overlay, { kind: 'reviewMany' }> }) {
+  const th = useTheme();
+  const nav = useNav();
+  const tr = translator(lang);
+  const [on, setOn] = useState(() => new Set(o.items.filter((i) => i.confidence >= CONFIDENCE_THRESHOLD).map((i) => i.needId)));
+  const [error, setError] = useState<string | null>(null);
+  const toggle = (id: string) => setOn((s) => (s.has(id) ? new Set([...s].filter((x) => x !== id)) : new Set([...s, id])));
+  const send = () => {
+    if (!on.size) return;
+    let failed = false;
+    for (const i of o.items) {
+      if (!on.has(i.needId)) continue;
+      const res = session.submit({ needId: i.needId, purposeId: i.purposeId, source: o.source, understanding: { confidence: i.confidence, viaPictures: false } });
+      if (!res.ok) failed = true;
+    }
+    if (!failed) {
+      nav.close();
+      nav.setTab('home');
+    } else setError(tr('requests.limit'));
+  };
+  return (
+    <Sheet
+      visible
+      title={tr('review.many', { n: o.items.length })}
+      onClose={nav.close}
+      closeLabel={tr('common.close')}
+      footer={<Btn big label={tr('review.sendAll', { n: on.size })} onPress={send} />}
+    >
+      {o.items.map((i) => {
+        const need = getNeed(i.needId);
+        if (!need) return null;
+        const checked = on.has(i.needId);
+        return (
+          <Pressable
+            key={i.needId}
+            onPress={() => toggle(i.needId)}
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked }}
+            accessibilityLabel={need.label[lang]}
+            style={{ flexDirection: 'row', alignItems: 'center', gap: th.space.md, padding: th.space.md, borderRadius: th.radius.md, borderWidth: 2, borderColor: checked ? th.p.primary : th.p.border, backgroundColor: checked ? th.p.primarySoft : th.p.surface }}
+          >
+            <NeedIcon name={need.icon} color={th.p.primary} size={th.fs(36)} />
+            <View style={{ flex: 1 }}>
+              <T v="title">{need.label[lang]}</T>
+              {i.purposeId && <T muted>{getPurpose(i.purposeId)?.label[lang]}</T>}
+            </View>
+            <View style={{ width: 30, height: 30, borderRadius: 8, borderWidth: 2, borderColor: th.p.primary, alignItems: 'center', justifyContent: 'center', backgroundColor: checked ? th.p.primary : 'transparent' }}>
+              {checked && <Check size={20} color="#fff" />}
+            </View>
+          </Pressable>
+        );
+      })}
+      {o.refused.length > 0 && (
+        <View style={{ gap: 4 }}>
+          <T bold>{tr('review.notWanted')}</T>
+          {o.refused.map((id) => (
+            <Text key={id} style={{ color: th.p.textMuted, textDecorationLine: 'line-through', fontSize: th.fs(16) }}>
+              {getNeed(id)?.label[lang] ?? id}
+            </Text>
+          ))}
+        </View>
+      )}
+      {error && (
+        <T color={th.p.danger} role="alert">
+          {error}
+        </T>
+      )}
+    </Sheet>
   );
 }
 

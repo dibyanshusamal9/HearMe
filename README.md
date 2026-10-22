@@ -131,6 +131,19 @@ Crew replies are read aloud on the passenger's phone in their language, with the
 
 ---
 
+### Several requests in one sentence
+
+*"मुझे ठंडा पानी नहीं चाहिए, दवाई लेने के लिए गरम पानी चाहिए, और हो सके तो एक कंबल भी दे दीजिए"* means "not cold water; hot water for my medicine; and a blanket if possible". HearMe now reads it that way. The sentence is split at punctuation and "and"-words, and each part is matched on its own.
+
+- **Refusals:** parts that refuse something ("नहीं चाहिए", "don't want", "いらない", "ไม่เอา", "tidak mau", "không cần", "instead of") rule that need out.
+- **Fillers:** "please" or "excuse me" on its own is ignored.
+- **Reasons:** a feeling answered by another request ("it's cold" + blanket) is treated as the reason, not a second request.
+- **Review:** the phone shows every request with a tick box, and refused items crossed out. Each ticked request reaches the crew as its own card.
+
+Results through the hub's matcher (`npm run multi -w @hearme/hub`):
+- 10 of 10 multi-request sentences in 6 languages came out exactly right.
+- None of the 216 single-request phrasings was mistaken for several requests.
+
 ## Measured results
 
 All numbers were measured on a MacBook Air (M2, 8 GB RAM). The scripts and test phrases are in `apps/hub/src/scripts`.

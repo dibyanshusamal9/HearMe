@@ -1,14 +1,4 @@
-import {
-  decide,
-  defaultMatcher,
-  matchOnHub,
-  translator,
-  type LangCode,
-  type MatchResult,
-  type RequestSource,
-  type SpeechRecognizer,
-  type UnderstandProgress,
-} from '@hearme/shared';
+import { decide, defaultMatcher, matchOnHub, translator, type LangCode, type MatchResult, type RequestSource, type SpeechRecognizer, type UnderstandProgress, splitRequests, understandRequests } from '@hearme/shared';
 import { MicUnavailableError } from '@hearme/shared/web';
 import Mic from 'lucide-react-native/icons/mic';
 import Square from 'lucide-react-native/icons/square';
@@ -37,8 +27,25 @@ const MIN_HOLD_MS = 400;
 export function useRouteTranscript() {
   const nav = useNav();
   return async (transcript: string, source: RequestSource, lang: LangCode, hubMatch?: MatchResult) => {
-    let match = hubMatch;
     const hub = getHubUrl();
+    // Several requests in one sentence, or something refused ("not cold water"): match each part.
+    const parts = splitRequests(transcript);
+    if (parts.length > 1 || parts.some((p) => p.refused)) {
+      const matchPart = async (t: string) => (hub ? (await matchOnHub(hub, t, { lang }))?.match : undefined) ?? defaultMatcher.match(t);
+      const many = await understandRequests(transcript, matchPart, defaultMatcher);
+      if (many.requests.length >= 2 || (many.requests.length === 1 && many.refused.length > 0)) {
+        nav.open({ kind: 'reviewMany', items: many.requests, refused: many.refused, source, transcript });
+        return;
+      }
+      if (many.requests.length === 0 && many.refused.length > 0) {
+        // Only a refusal: ask with pictures, leaving out what was refused.
+        const d = decide(hubMatch ?? defaultMatcher.match(transcript));
+        const options = (d.kind === 'confident' ? [d.needId] : d.options).filter((id) => !many.refused.includes(id));
+        nav.open({ kind: 'ask', options, purposeId: d.purposeId, source, transcript, confidence: 0 });
+        return;
+      }
+    }
+    let match = hubMatch;
     if (!match && hub) match = (await matchOnHub(hub, transcript, { lang }))?.match;
     const d = decide(match ?? defaultMatcher.match(transcript));
     if (d.kind === 'confident') {

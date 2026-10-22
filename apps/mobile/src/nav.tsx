@@ -5,6 +5,13 @@ export type Tab = 'home' | 'requests' | 'card' | 'flight' | 'settings';
 
 export type Overlay =
   | { kind: 'review'; needId: string; purposeId?: NeedPurpose['id']; source: RequestSource; understanding?: Understanding }
+  | {
+      kind: 'reviewMany';
+      items: { needId: string; purposeId?: NeedPurpose['id']; confidence: number }[];
+      refused: string[];
+      source: RequestSource;
+      transcript: string;
+    }
   | { kind: 'picker'; category: NeedCategory }
   | { kind: 'speech' }
   | { kind: 'typed' }

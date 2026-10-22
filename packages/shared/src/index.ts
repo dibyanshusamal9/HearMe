@@ -9,6 +9,7 @@ export * from './catalog/medical';
 export * from './matching/matcher';
 export * from './matching/semantic';
 export * from './matching/head';
+export * from './matching/requests';
 export * from './metrics/crewMetrics';
 export * from './cabin/protocol';
 export * from './cabin/hubProtocol';
