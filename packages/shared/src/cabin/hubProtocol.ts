@@ -113,7 +113,8 @@ function parseUnderstanding(v: unknown): Understanding | undefined | null {
 
 function parseMedical(v: unknown): MedicalReport | undefined | null {
   if (v === undefined) return undefined;
-  if (!isObj(v) || typeof v.pain !== 'number' || !Number.isInteger(v.pain) || v.pain < 0 || v.pain > 10) return null;
+  if (!isObj(v)) return null;
+  if (v.pain !== null && (typeof v.pain !== 'number' || !Number.isInteger(v.pain) || v.pain < 0 || v.pain > 10)) return null;
   const areas = subset(v.areas, AREAS);
   const symptoms = subset(v.symptoms, SYMPTOMS);
   const conditions = subset(v.conditions, CONDITIONS);

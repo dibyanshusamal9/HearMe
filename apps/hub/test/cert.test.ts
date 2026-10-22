@@ -81,10 +81,13 @@ describe('loadOrCreateCert', () => {
     expect(moved.cert).not.toBe(first.cert);
     expect(moved.caFingerprint).toBe(first.caFingerprint);
     expect(moved.hosts).toContain('10.0.0.7');
-    // Private keys are readable only by this user.
-    const dir = process.env.HEARME_CERT_DIR!;
-    expect(statSync(join(dir, 'ca', 'hearme-root-ca-key.pem')).mode & 0o077).toBe(0);
-    expect(statSync(join(dir, 'hub-key.pem')).mode & 0o077).toBe(0);
+    // Private keys are readable only by this user. Windows has no POSIX mode bits (Node reports 0o666 and chmod only
+    // toggles read-only); there the keys are protected by the user-profile ACL the certificate folder inherits.
+    if (process.platform !== 'win32') {
+      const dir = process.env.HEARME_CERT_DIR!;
+      expect(statSync(join(dir, 'ca', 'hearme-root-ca-key.pem')).mode & 0o077).toBe(0);
+      expect(statSync(join(dir, 'hub-key.pem')).mode & 0o077).toBe(0);
+    }
   }, 60_000);
 });
 

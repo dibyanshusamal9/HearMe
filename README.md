@@ -15,6 +15,19 @@ A working prototype of *HearMe · Idea Submission* by Nidhish Bansal, Dhruv Mitt
 
 ---
 
+
+## Get it running
+
+```bash
+git clone https://github.com/dibyanshusamal9/HearMe.git
+cd HearMe
+npm install
+npm run demo -- --check   # what is missing, if anything
+npm run demo              # first run downloads the offline AI models (~480 MB), then opens the demo stage
+```
+
+Then open `http://localhost:8080/#/stage` and press **Run the story**. To test with a phone, see [Run the demo](#run-the-demo).
+
 ## Run the demo
 
 You need Node 20 or newer and about 1.5 GB of free RAM. ffmpeg is optional: it is only needed for audio from native phones.

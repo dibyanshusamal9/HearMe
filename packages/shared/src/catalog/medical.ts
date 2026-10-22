@@ -53,26 +53,31 @@ export function painWord(pain: number, lang: LangCode): string {
 }
 
 export function emptyMedicalReport(): MedicalReport {
-  return { areas: [], pain: 0, symptoms: [], conditions: [] };
+  return { areas: [], pain: null, symptoms: [], conditions: [] };
 }
 
 /** Severe pain, or a red-flag symptom: the crew console shows it first, in red. */
 export function isUrgentMedical(r: MedicalReport | undefined): boolean {
   if (!r) return false;
-  if (r.pain >= 7) return true;
-  if (r.areas.includes('chest') && r.pain >= 4) return true;
+  const pain = r.pain ?? 0;
+  if (pain >= 7) return true;
+  if (r.areas.includes('chest') && pain >= 4) return true;
   return r.symptoms.some((s) => SYMPTOMS.find((x) => x.id === s)?.urgent);
 }
 
 const label = <T extends string>(list: { id: T; label: Localized }[], id: T, lang: LangCode) =>
   list.find((x) => x.id === id)?.label[lang] ?? id;
 
-/** One line per fact, e.g. ["Pain 7/10 (Severe): Chest", "Dizzy · Feel sick", "Known: Diabetes"]. */
+/** One line per fact, e.g. ["Pain 7/10 (Severe): Chest", "Dizzy · Feel sick", "Known: Diabetes"]; "Chest · pain not rated" without a number. */
 export function medicalSummaryLines(r: MedicalReport, lang: LangCode): string[] {
   const where = r.areas.map((a) => label(BODY_AREAS, a, lang)).join(lang === 'ja' ? '・' : ', ');
   const painLabel = { en: 'Pain', hi: 'दर्द', ja: '痛み', th: 'ความปวด', id: 'Nyeri', vi: 'Đau' }[lang];
   const knownLabel = { en: 'Known', hi: 'पहले से', ja: '持病', th: 'โรคประจำตัว', id: 'Riwayat', vi: 'Bệnh nền' }[lang];
-  const lines = [`${painLabel} ${r.pain}/10 (${painWord(r.pain, lang)})${where ? `: ${where}` : ''}`];
+  const notRated = { en: 'pain not rated', hi: 'दर्द का स्तर नहीं बताया', ja: '痛みの程度は未入力', th: 'ไม่ได้ระบุระดับความปวด', id: 'tingkat nyeri tidak diisi', vi: 'chưa chọn mức đau' }[lang];
+  const lines =
+    r.pain === null
+      ? [`${where ? `${where} · ` : ''}${notRated}`]
+      : [`${painLabel} ${r.pain}/10 (${painWord(r.pain, lang)})${where ? `: ${where}` : ''}`];
   if (r.symptoms.length) lines.push(r.symptoms.map((s) => label(SYMPTOMS, s, lang)).join(' · '));
   if (r.conditions.length) lines.push(`${knownLabel}: ${r.conditions.map((c) => label(CONDITIONS, c, lang)).join(', ')}`);
   return lines;

@@ -1,3 +1,4 @@
+import { JalBrand } from '../components/JalBrand';
 import { COMMON_NEEDS, getNeed, isActive, replyText, requestTitle, translator, type LangCode, type PassengerRequest } from '@hearme/shared';
 import { useSession } from '@hearme/shared/react';
 import HeartPulse from 'lucide-react-native/icons/heart-pulse';
@@ -31,12 +32,11 @@ export function Home({ lang }: { lang: LangCode }) {
   return (
     <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={{ padding: th.space.lg, gap: th.space.lg, paddingBottom: th.space.xl }}>
-        <View>
-          <T v="heading" role="header">
-            {profile?.name ? tr('home.greetingName', { name: profile.name }) : tr('home.greeting')}
-          </T>
-          <T v="bodyLarge" muted>
-            {tr('home.question')}
+        {/* Brand and greeting stay short so the request pictures are visible without scrolling. */}
+        <View style={{ gap: th.space.sm }}>
+          <JalBrand compact />
+          <T v="title" role="header">
+            <Text style={{ color: th.p.primary }}>{profile?.name ? tr('home.greetingName', { name: profile.name }) : tr('home.greeting')}</Text> {tr('home.question')}
           </T>
         </View>
 
@@ -51,8 +51,6 @@ export function Home({ lang }: { lang: LangCode }) {
 
         {current && <CurrentRequest r={current} lang={lang} />}
 
-        {askVoice && !current && <VoiceCheck lang={lang} />}
-
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: th.space.md }}>
           {COMMON_NEEDS.slice(0, 7).map((n) => (
             <Tile key={n.id} label={n.label[lang]} onPress={() => nav.open({ kind: 'review', needId: n.id, source: 'tap' })} icon={(c, s) => <NeedIcon name={n.icon} color={c} size={s} />} />
@@ -62,6 +60,8 @@ export function Home({ lang }: { lang: LangCode }) {
 
         {/* Feeling unwell goes straight to Care Mode: no hunting through categories when it matters most. */}
         <Btn variant="secondary" label={tr('care.open')} onPress={() => nav.open({ kind: 'care' })} icon={(c, s) => <HeartPulse color={c} size={s} />} />
+        {/* Asked once, after the pictures: replies can wait a moment, a request should not. */}
+        {askVoice && !current && <VoiceCheck lang={lang} />}
         <Btn variant="ghost" label={tr('home.private')} onPress={() => nav.open({ kind: 'picker', category: 'private' })} icon={(c, s) => <Lock color={c} size={s} />} />
       </ScrollView>
 

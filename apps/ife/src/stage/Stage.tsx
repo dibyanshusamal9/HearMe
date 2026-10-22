@@ -1,3 +1,4 @@
+import { JalBrand } from '../common/JalBrand';
 import {
   WebSocketBus,
   getAnnouncement,
@@ -98,7 +99,8 @@ function describeEvent(e: HubEvent): Item {
     id: `ev-${e.at}`,
     at: e.at,
     dir: 'hub',
-    title: `Whisper heard (${lang}, ${(e.asrMs / 1000).toFixed(1)} s): “${e.transcript}”`,
+    // Typed text reaches the hub through /api/match with asrMs 0; Whisper never takes 0 ms.
+    title: e.asrMs > 0 ? `Whisper heard (${lang}, ${(e.asrMs / 1000).toFixed(1)} s): “${e.transcript}”` : `Typed (${lang}), matched on this laptop: “${e.transcript}”`,
     detail: target ? `${e.target === 'needs' ? 'Means' : 'Closest verified reply'}: ${target} · ${Math.round(e.confidence * 100)}% sure${e.confidence < 0.85 && e.target === 'needs' ? ' → asks with pictures' : ''}` : 'No match',
   };
 }
@@ -238,7 +240,7 @@ export function Stage() {
     <div className="stage">
       <header className="stage-top">
         <a className="stage-brand" href="#/">
-          Hear<span>Me</span>
+          <JalBrand />
         </a>
         <span className="stage-title">Live demo · seat 23C ↔ cabin crew</span>
         <div className="stage-chips">

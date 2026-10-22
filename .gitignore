@@ -15,3 +15,7 @@ apps/hub/.eval/
 # HearMe hub: generated story voice (macOS say) and voice lab results
 apps/hub/.cache/
 apps/hub/.lab/
+
+# Local npm cache and design-tool scratch files
+.npm-cache/
+.impeccable/hook.cache.json

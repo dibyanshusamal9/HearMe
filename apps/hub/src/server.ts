@@ -1,6 +1,6 @@
 import { createReadStream, existsSync, statSync } from 'node:fs';
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { extname, join, normalize, resolve } from 'node:path';
+import { extname, isAbsolute, join, normalize, relative, resolve, sep } from 'node:path';
 import { LANGUAGES, type HubStatus, type LangCode, type UnderstandResult, type UnderstandStreamLine, type UnderstandTarget } from '@hearme/shared';
 import { STORY_SENTENCES, parseLabTakeQuery, scoreTake, takesToCsv, type LabTake } from '@hearme/shared/lab';
 import type { AiEngine } from './ai';
@@ -352,7 +352,9 @@ export function createHandler(opts: HandlerOptions) {
     let rel = decodeURIComponent(pathname);
     if (rel.endsWith('/')) rel += 'index.html';
     const file = resolve(join(root, normalize(rel)));
-    if (!file.startsWith(root + '/') && file !== root) return send(res, 403, 'forbidden', 'text/plain');
+    // Compare with path.relative, not a '/' prefix: on Windows paths use '\' and may sit on another drive.
+    const inside = relative(root, file);
+    if (inside === '..' || inside.startsWith('..' + sep) || isAbsolute(inside)) return send(res, 403, 'forbidden', 'text/plain');
     if (!existsSync(file) || !statSync(file).isFile()) {
       // "/mobile" without the slash, or a page that has not been built yet.
       if (existsSync(join(file, 'index.html'))) {
@@ -362,7 +364,8 @@ export function createHandler(opts: HandlerOptions) {
       return send(res, 404, 'not found — run `npm run build` first', 'text/plain; charset=utf-8');
     }
     const type = MIME[extname(file).toLowerCase()] ?? 'application/octet-stream';
-    const hashed = /\/assets\/|\/_expo\/static\/|\.[0-9a-f]{8,}\./.test(file);
+    // Match on the URL path, which always uses '/', whatever the OS's file separator.
+    const hashed = /\/assets\/|\/_expo\/static\/|\.[0-9a-f]{8,}\./.test(rel);
     res.writeHead(200, {
       'Content-Type': type,
       'Cache-Control': type.startsWith('text/html') || file.endsWith('sw.js') ? 'no-cache' : hashed ? 'public, max-age=31536000, immutable' : 'public, max-age=3600',
@@ -426,6 +429,8 @@ export function createHandler(opts: HandlerOptions) {
       return serveStatic(res, url.pathname);
     } catch (e) {
       if (e instanceof AudioError) return json(res, e.status, { error: e.message });
+      // The client only sees "internal error"; the hub laptop's terminal says why.
+      console.error(`  ${req.method} ${url.pathname} failed: ${e instanceof Error ? e.message : String(e)}`);
       if (!res.headersSent) json(res, 500, { error: 'internal error' });
     }
   };

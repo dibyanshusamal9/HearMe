@@ -198,11 +198,15 @@ export function StatusChip({ r, lang }: { r: PassengerRequest; lang: LangCode })
   );
 }
 
-export function ConnectionPill({ status, lang }: { status: 'online' | 'no_crew' | 'offline'; lang: LangCode }) {
+export function ConnectionPill({ status, lang, demo }: { status: 'online' | 'no_crew' | 'offline'; lang: LangCode; demo?: boolean }) {
   const th = useTheme();
   const tr = translator(lang);
+  // Answered by the in-app simulated crew, not a person: say so.
+  const shown = status === 'online' && demo ? 'demo' : status;
   const c =
-    status === 'online'
+    shown === 'demo'
+      ? { bg: th.p.infoSoft, fg: th.p.info }
+      : status === 'online'
       ? { bg: th.p.successSoft, fg: th.p.success }
       : status === 'no_crew'
         ? { bg: th.p.warningSoft, fg: th.p.warning }
@@ -213,7 +217,7 @@ export function ConnectionPill({ status, lang }: { status: 'online' | 'no_crew' 
       accessible
       accessibilityRole="text"
       accessibilityLiveRegion="polite"
-      accessibilityLabel={tr(`link.${status}`)}
+      accessibilityLabel={tr(`link.${shown}`)}
       style={{
         flexDirection: 'row',
         alignItems: 'center',
@@ -229,7 +233,7 @@ export function ConnectionPill({ status, lang }: { status: 'online' | 'no_crew' 
     >
       <Icon size={th.fs(16)} color={c.fg} />
       <Text numberOfLines={1} maxFontSizeMultiplier={1.3} style={{ color: c.fg, fontWeight: '700', fontSize: th.fs(13), flexShrink: 1 }}>
-        {tr(`link.${status}`)}
+        {tr(`link.${shown}`)}
       </Text>
     </View>
   );

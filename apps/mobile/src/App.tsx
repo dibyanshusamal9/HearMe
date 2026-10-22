@@ -1,5 +1,5 @@
 import { getAnnouncement, languageInfo, translator, type LangCode } from '@hearme/shared';
-import { useSession } from '@hearme/shared/react';
+import { useCrewMode, useSession } from '@hearme/shared/react';
 import { StatusBar } from 'expo-status-bar';
 import Hand from 'lucide-react-native/icons/hand';
 import House from 'lucide-react-native/icons/house';
@@ -13,7 +13,7 @@ import { ActivityIndicator, BackHandler, Platform, Pressable, Text, View } from 
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { ConnectionPill, T } from './components/ui';
 import { NavContext, useNav, type Nav, type Overlay, type Tab } from './nav';
-import { clearStoredSession, connectHub, inStage, loadSession, registerOfflineCache, session, startAutosave, unlockVoiceOnFirstTap } from './runtime';
+import { clearStoredSession, connectHub, inStage, link as cabinLink, loadSession, registerOfflineCache, session, startAutosave, unlockVoiceOnFirstTap } from './runtime';
 import { seatFromUrl } from './screens/Onboarding';
 import { Home } from './screens/Home';
 import { Onboarding } from './screens/Onboarding';
@@ -37,7 +37,9 @@ export default function App() {
       };
     }
     // Find the cabin hub first (quick), so onboarding can read the booking for this seat.
-    Promise.all([loadSession(), connectHub().catch(() => false)]).then(async ([r]) => {
+    // On the demo stage every load is a new passenger: the story, "Run again" and Reset all start at the booking screen.
+    const restore = inStage ? clearStoredSession().then(() => 'fresh' as const) : loadSession();
+    Promise.all([restore, connectHub().catch(() => false)]).then(async ([r]) => {
       if (r === 'corrupt') setNotice('Saved data could not be read and was cleared.');
       // Opened from another seat's QR code: a new passenger, so start fresh.
       const qr = seatFromUrl();
@@ -127,6 +129,7 @@ function Root({ startupNotice }: { startupNotice: string | null }) {
 function Header({ lang, seat }: { lang: LangCode; seat: string }) {
   const th = useTheme();
   const link = useSession(session, (s) => s.link);
+  const crewMode = useCrewMode(cabinLink);
   const tr = translator(lang);
   const nav = useNav();
   return (
@@ -135,7 +138,7 @@ function Header({ lang, seat }: { lang: LangCode; seat: string }) {
         {tr('common.seat')} <Text style={{ fontWeight: '800', fontSize: th.fs(20) }}>{seat}</Text>
       </Text>
       <View style={{ flex: 1, alignItems: 'flex-end' }}>
-        <ConnectionPill status={link} lang={lang} />
+        <ConnectionPill status={link} lang={lang} demo={crewMode === 'simulated'} />
       </View>
       <Pressable
         onPress={() => nav.setTab('settings')}

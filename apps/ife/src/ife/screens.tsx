@@ -1,3 +1,4 @@
+import { JalBrand } from '../common/JalBrand';
 import {
   CATEGORIES,
   CATEGORY_LABELS,
@@ -34,12 +35,13 @@ export function publicTitle(r: PassengerRequest, lang: LangCode): string {
 }
 
 // ── Top-bar connection status ─────────────────────────────────────────────
-export function ConnectionPill({ session, lang }: { session: PassengerSession; lang: LangCode }) {
+export function ConnectionPill({ session, lang, demo }: { session: PassengerSession; lang: LangCode; demo?: boolean }) {
   const link = useSession(session, (s) => s.link);
   const tr = translator(lang);
-  const label = tr(`link.${link}`);
+  const shown = link === 'online' && demo ? 'demo' : link;
+  const label = tr(`link.${shown}`);
   return (
-    <div className={`ife-pill ife-pill--${link}`} role="status" aria-live="polite">
+    <div className={`ife-pill ife-pill--${shown}`} role="status" aria-live="polite">
       {link === 'offline' ? <WifiOff aria-hidden /> : <Wifi aria-hidden />}
       <span>{label}</span>
     </div>
@@ -73,7 +75,7 @@ export function AttractScreen({ seat, onStart }: { seat: string; onStart: () => 
     <button className="ife-attract" onClick={onStart}>
       <img className="ife-attract__img" src="/img/cabin-bright.jpg" alt="" />
       <div className="ife-attract__brand">
-        Hear<span>Me</span>
+        <JalBrand />
       </div>
       <div className="ife-attract__tag">{translator('en')('app.tagline')}</div>
       <div className="ife-attract__cta" lang={l.bcp47}>

@@ -93,8 +93,8 @@ export type ConditionId = 'diabetes' | 'heart' | 'asthma' | 'blood_pressure' | '
 
 export interface MedicalReport {
   areas: BodyArea[];
-  /** 0 (no pain) … 10 (worst pain). */
-  pain: number;
+  /** 0 (no pain) … 10 (worst pain); null when the passenger did not pick a number. */
+  pain: number | null;
   symptoms: SymptomId[];
   conditions: ConditionId[];
 }

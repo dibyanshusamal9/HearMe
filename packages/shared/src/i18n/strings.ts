@@ -450,6 +450,14 @@ const S = {
     id: 'Terhubung ke awak kabin',
     vi: 'Đã kết nối tiếp viên',
   },
+  'link.demo': {
+    en: 'Demo crew (simulated)',
+    hi: 'डेमो क्रू (सिम्युलेटेड)',
+    ja: 'デモ用の乗務員（シミュレーション）',
+    th: 'ลูกเรือจำลองสำหรับสาธิต',
+    id: 'Awak demo (simulasi)',
+    vi: 'Tiếp viên demo (mô phỏng)',
+  },
   'link.no_crew': {
     en: 'Crew tablet not responding',
     hi: 'क्रू टैबलेट जवाब नहीं दे रहा',
@@ -778,6 +786,22 @@ const S = {
     th: "อาการนี้อาจร้ายแรง ลูกเรือจะมาหาคุณก่อน",
     id: "Ini tampak serius. Awak kabin akan mendahulukan Anda.",
     vi: "Có vẻ nghiêm trọng. Tiếp viên sẽ đến với bạn trước.",
+  },
+  'care.myBack': {
+    en: 'My back',
+    hi: 'मेरी पीठ',
+    ja: '背中',
+    th: 'หลังของฉัน',
+    id: 'Punggung saya',
+    vi: 'Lưng của tôi',
+  },
+  'care.notRated': {
+    en: 'Tap a number, or leave it out.',
+    hi: 'कोई अंक चुनें, या छोड़ दें।',
+    ja: '数字を選んでください（省略もできます）。',
+    th: 'แตะตัวเลข หรือข้ามไปก็ได้',
+    id: 'Ketuk angka, atau lewati saja.',
+    vi: 'Chạm vào một số, hoặc bỏ qua.',
   },
   'care.optional': {
     en: "You can also send without details.",

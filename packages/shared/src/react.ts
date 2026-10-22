@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react';
+import type { CrewMode, DemoCabinLink } from './cabin/demo';
 import type { PassengerSession, SessionState } from './session/session';
 
 /** Subscribe a React component to the shared PassengerSession store. */
@@ -16,5 +17,17 @@ export function useExternal<S>(store: { getState(): S; subscribe(l: (s: S) => vo
     (cb) => store.subscribe(() => cb()),
     () => store.getState(),
     () => store.getState(),
+  );
+}
+
+/** Where the passenger link's crew is right now: the hub, a crew console tab, or the in-app simulated crew. */
+export function useCrewMode(link: DemoCabinLink): CrewMode {
+  return useSyncExternalStore(
+    (cb) => {
+      const off = link.onChange(cb);
+      return () => void off();
+    },
+    () => link.mode,
+    () => link.mode,
   );
 }

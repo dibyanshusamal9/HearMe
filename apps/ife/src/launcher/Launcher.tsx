@@ -1,3 +1,4 @@
+import { JalBrand } from '../common/JalBrand';
 import { Film, FlaskConical, Info, Monitor, Printer, QrCode, Smartphone, Tablet, Theater, WifiOff, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useHubStatus } from '../common/hub';
@@ -16,7 +17,7 @@ export function Launcher() {
         <div className="home-hero__shade" />
         <div className="home-hero__text">
           <div className="home-brand">
-            Hear<span>Me</span>
+            <JalBrand />
           </div>
           <h1>Helping passengers and cabin crew understand each other.</h1>
           <p>In any language. In a noisy cabin. Even with no internet.</p>
@@ -47,6 +48,7 @@ export function Launcher() {
           <Tablet aria-hidden />
           <strong>Crew console</strong>
           <span>Requests by seat in Japanese, live numbers, one-tap or spoken replies.</span>
+          {!hub && <em>Without the hub: while it is open, the phone and seatback tabs in this browser send to it</em>}
         </a>
       </nav>
 
@@ -82,7 +84,8 @@ export function Launcher() {
           </p>
           {!hub && (
             <p className="home-about__warn">
-              <WifiOff aria-hidden /> No hub is running, so each page uses an in-browser simulated crew. Run <code>npm run demo</code> for the real thing.
+              <WifiOff aria-hidden /> No hub is running. The phone and seatback answer with a simulated crew, labelled <i>Demo crew</i>, until you open the crew console in
+              another tab of this browser; then their requests go to it. Run <code>npm run demo</code> for the real thing.
             </p>
           )}
         </div>
@@ -114,7 +117,7 @@ function PhoneQr({ url }: { url: string }) {
 export function MobilePreview() {
   const [state, setState] = useState<'checking' | 'ok' | 'missing'>('checking');
   const seat = new URLSearchParams(window.location.search).get('seat') ?? '';
-  const src = import.meta.env.VITE_MOBILE_URL ?? `${import.meta.env.BASE_URL}mobile/${seat ? `?seat=${encodeURIComponent(seat)}` : ''}`;
+  const src = import.meta.env.VITE_MOBILE_URL ?? `${import.meta.env.BASE_URL}mobile/index.html${seat ? `?seat=${encodeURIComponent(seat)}` : ''}`;
   useEffect(() => {
     if (import.meta.env.VITE_MOBILE_URL) return setState('ok');
     fetch(`${import.meta.env.BASE_URL}mobile/index.html`, { method: 'GET' })
@@ -145,3 +148,4 @@ export function MobilePreview() {
     </div>
   );
 }
+

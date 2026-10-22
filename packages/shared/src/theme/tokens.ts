@@ -1,6 +1,6 @@
 /**
  * HearMe design tokens, shared by the React Native app and the web IFE.
- * Palette follows the PDF mockups (warm coral, deep navy, cream) but darkened
+ * JAL-inspired palette (crimson, charcoal, white) with accessible semantic colors
  * where needed so text meets WCAG AA (≥ 4.5:1) — contrast is checked in tests.
  */
 
@@ -14,6 +14,8 @@ export interface Palette {
   primary: string;
   onPrimary: string;
   primarySoft: string;
+  /** Darker primary for text on primarySoft and pressed states. */
+  primaryStrong: string;
   navy: string;
   onNavy: string;
   success: string;
@@ -22,20 +24,24 @@ export interface Palette {
   warningSoft: string;
   danger: string;
   dangerSoft: string;
+  /** Neutral information (notes, "offered" outcomes); distinct from focus rings. */
+  info: string;
+  infoSoft: string;
   focus: string;
 }
 
 export const lightPalette: Palette = {
-  bg: '#FBF7F2',
+  bg: '#F7F7F5',
   surface: '#FFFFFF',
-  surfaceAlt: '#F3EDE6',
-  text: '#16202E',
-  textMuted: '#4A5465',
-  border: '#D9D0C5',
-  primary: '#B93C14',
+  surfaceAlt: '#EFEFED',
+  text: '#242424',
+  textMuted: '#626262',
+  border: '#D8D8D5',
+  primary: '#C8102E',
   onPrimary: '#FFFFFF',
-  primarySoft: '#FCE9E1',
-  navy: '#15233D',
+  primarySoft: '#FCECEF',
+  primaryStrong: '#A80C26',
+  navy: '#242424',
   onNavy: '#FFFFFF',
   success: '#1D6B45',
   successSoft: '#E3F3EA',
@@ -43,6 +49,8 @@ export const lightPalette: Palette = {
   warningSoft: '#FFF2D6',
   danger: '#A8231A',
   dangerSoft: '#FDE7E5',
+  info: '#1A4FAE',
+  infoSoft: '#E8F0FE',
   focus: '#1F5FD1',
 };
 
@@ -57,6 +65,7 @@ export const highContrastPalette: Palette = {
   primary: '#FFD23F',
   onPrimary: '#000000',
   primarySoft: '#2A2300',
+  primaryStrong: '#FFE47D',
   navy: '#000000',
   onNavy: '#FFFFFF',
   success: '#7CFFB2',
@@ -65,6 +74,8 @@ export const highContrastPalette: Palette = {
   warningSoft: '#2A2300',
   danger: '#FF9C94',
   dangerSoft: '#2B0300',
+  info: '#7CC4FF',
+  infoSoft: '#001A33',
   focus: '#7CC4FF',
 };
 

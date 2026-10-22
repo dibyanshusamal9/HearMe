@@ -1,8 +1,10 @@
+import { JalBrand } from '../common/JalBrand';
 import {
   ANNOUNCEMENTS,
   CrewTablet,
   RemoteCrewTablet,
   REPLIES,
+  announceCrewConsole,
   REPLY_SUGGEST_MIN,
   computeCrewMetrics,
   createBroadcastBus,
@@ -60,7 +62,10 @@ export function CrewConsole() {
       const bus = createBroadcastBus();
       if (!bus) return setConn({ kind: 'unsupported' });
       const tablet = new CrewTablet(bus, { crewName: 'Aoi', autoReplyDelayMs: 2500 });
+      // Passenger tabs in this browser switch from their simulated crew to this console.
+      const stopAnnouncing = announceCrewConsole();
       cleanup = () => {
+        stopAnnouncing();
         tablet.dispose();
         bus.close();
       };
@@ -110,9 +115,19 @@ function Console({ tablet, viaHub }: { tablet: CrewTabletApi; viaHub: boolean })
   const [connected, setConnected] = useState(true);
   const [heat, setHeat] = useState(false);
   const [seatInfo, setSeatInfo] = useState<string | null>(null);
+  const [confirmReset, setConfirmReset] = useState(false);
+  // New requests that arrived while the crew member was looking at another one.
+  const [waiting, setWaiting] = useState<string[]>([]);
+  const lastShown = useRef<string | null>(null);
   useTick();
 
-  // Chime when a new request arrives (an urgent tone for serious medical requests).
+  const choose = (id: string) => {
+    setSelected(id);
+    setWaiting((w) => w.filter((x) => x !== id));
+  };
+
+  // Chime when a new request arrives (an urgent tone for serious medical requests). Never switch away from the
+  // request on screen: a reply tapped a moment later must go to the seat the crew member was reading.
   const seen = useRef<Set<string> | null>(null);
   useEffect(() => {
     const ids = new Set(state.requests.map((r) => r.requestId));
@@ -120,7 +135,11 @@ function Console({ tablet, viaHub }: { tablet: CrewTabletApi; viaHub: boolean })
       const fresh = state.requests.filter((r) => !seen.current!.has(r.requestId));
       if (fresh.length) {
         playChime(fresh.some((r) => isUrgentMedical(r.medical)) ? 'urgent' : 'new');
-        setSelected(fresh[0]!.requestId);
+        const shown = lastShown.current;
+        if (shown && ids.has(shown)) {
+          setSelected(shown);
+          setWaiting((w) => [...w, ...fresh.map((r) => r.requestId).filter((id) => !w.includes(id))]);
+        } else setSelected([...fresh].sort((a, b) => priority(a) - priority(b))[0]!.requestId);
       }
     }
     seen.current = ids;
@@ -139,6 +158,10 @@ function Console({ tablet, viaHub }: { tablet: CrewTabletApi; viaHub: boolean })
 
   const sorted = useMemo(() => [...state.requests].sort((a, b) => priority(a) - priority(b) || b.receivedAt - a.receivedAt), [state.requests]);
   const sel = state.requests.find((r) => r.requestId === selected) ?? sorted.find((r) => r.status === 'new') ?? sorted[0];
+  useEffect(() => {
+    lastShown.current = sel?.requestId ?? null;
+  });
+  const pending = sorted.filter((r) => r.status === 'new' && waiting.includes(r.requestId) && r.requestId !== sel?.requestId);
   const metrics = computeCrewMetrics(state.requests);
   const openSeats = new Map(state.requests.filter((r) => r.status === 'new').map((r) => [r.seat, isUrgentMedical(r.medical) ? 'urgent' : 'open']));
   const doneSeats = new Set(state.requests.filter((r) => r.status === 'replied' || r.status === 'thanked').map((r) => r.seat));
@@ -150,7 +173,7 @@ function Console({ tablet, viaHub }: { tablet: CrewTabletApi; viaHub: boolean })
     <div className={`crew2${embedded ? ' crew2--embedded' : ''}`} lang="ja">
       <header className="crew2-top">
         <div className="crew2-brand">
-          Hear<span>Me</span> <em>Crew</em>
+          <JalBrand label="Cabin crew" />
         </div>
         <span className={`crew2-conn${connected ? '' : ' off'}`} lang="en">
           {connected ? <Wifi aria-hidden /> : <WifiOff aria-hidden />}
@@ -171,13 +194,25 @@ function Console({ tablet, viaHub }: { tablet: CrewTabletApi; viaHub: boolean })
         <button className="crew2-icon" onClick={() => openFlightReport(state)} title="Post-flight report (print or save as PDF)" aria-label="Flight report">
           <FileText aria-hidden />
         </button>
-        <button className="crew2-icon" onClick={() => tablet.reset()} title="Clear all requests (demo reset)" aria-label="Reset demo">
+        <button className="crew2-icon" onClick={() => setConfirmReset(true)} title="Clear all requests (demo reset)" aria-label="Reset demo" aria-expanded={confirmReset}>
           <RotateCcw aria-hidden />
         </button>
         <button className="crew2-icon" onClick={() => setInfo(!info)} aria-expanded={info} aria-label="About this console">
           <Info aria-hidden />
         </button>
       </header>
+      {confirmReset && (
+        <ConfirmReset
+          count={state.requests.length}
+          onCancel={() => setConfirmReset(false)}
+          onConfirm={() => {
+            tablet.reset();
+            setSelected(null);
+            setWaiting([]);
+            setConfirmReset(false);
+          }}
+        />
+      )}
       {info && (
         <div className="crew2-info" lang="en" role="dialog" aria-label="About this console">
           <button className="crew2-icon" onClick={() => setInfo(false)} aria-label="Close">
@@ -222,7 +257,7 @@ function Console({ tablet, viaHub }: { tablet: CrewTabletApi; viaHub: boolean })
                     aria-label={`${seat}${st ? ', request waiting' : ''}${perSeat.get(seat) ? `, ${perSeat.get(seat)} requests this flight` : ''}`}
                     onClick={() => {
                       setSeatInfo(seat);
-                      if (req) setSelected(req.requestId);
+                      if (req) choose(req.requestId);
                     }}
                   >
                     {heat ? (perSeat.get(seat) ?? '') : st ? seat : ''}
@@ -246,7 +281,7 @@ function Console({ tablet, viaHub }: { tablet: CrewTabletApi; viaHub: boolean })
           {heard && <Heard e={heard} />}
         </section>
 
-        <section className="crew2-list" aria-label="Requests" aria-live="polite">
+        <section className="crew2-list" aria-label="Requests">
           {sorted.length === 0 && (
             <div className="crew2-empty">
               <Users aria-hidden />
@@ -258,11 +293,14 @@ function Console({ tablet, viaHub }: { tablet: CrewTabletApi; viaHub: boolean })
             </div>
           )}
           {sorted.map((r) => (
-            <RequestCard key={r.requestId} r={r} active={sel?.requestId === r.requestId} onClick={() => setSelected(r.requestId)} />
+            <RequestCard key={r.requestId} r={r} active={sel?.requestId === r.requestId} onClick={() => choose(r.requestId)} />
           ))}
         </section>
 
-        <section className="crew2-detail">{sel ? <Detail r={sel} tablet={tablet} viaHub={viaHub} /> : <p className="crew2-hint" lang="en">Select a request.</p>}</section>
+        <section className="crew2-detail">
+          {pending.length > 0 && <NewRequests pending={pending} onShow={choose} />}
+          {sel ? <Detail r={sel} tablet={tablet} viaHub={viaHub} /> : <p className="crew2-hint" lang="en">Select a request.</p>}
+        </section>
 
         <section className="crew2-ann" aria-label="Announcement captions">
           <h2>
@@ -280,6 +318,57 @@ function Console({ tablet, viaHub }: { tablet: CrewTabletApi; viaHub: boolean })
             </p>
           )}
         </section>
+      </div>
+    </div>
+  );
+}
+
+/** New requests that arrived while another one was open: shown here instead of switching the screen. */
+function NewRequests({ pending, onShow }: { pending: CrewRequest[]; onShow: (id: string) => void }) {
+  const first = pending[0]!;
+  const urgent = isUrgentMedical(first.medical);
+  const need = getNeed(first.needId);
+  return (
+    <div className={`crew2-newbar${urgent ? ' urgent' : ''}`} role={urgent ? 'alert' : 'status'}>
+      <span className="crew2-newbar__text">
+        <b>{pending.length > 1 ? `新しいリクエスト ${pending.length}件` : '新しいリクエスト'}</b>
+        <span>
+          {first.seat} · {first.medical ? '体調不良' : need?.label.ja}
+          {urgent && <em lang="en"> URGENT</em>}
+        </span>
+        <small lang="en">{pending.length > 1 ? `${pending.length} new requests` : 'New request'} · {need?.label.en}</small>
+      </span>
+      <button className="crew2-btn" onClick={() => onShow(first.requestId)}>
+        表示 <small lang="en">Show {first.seat}</small>
+      </button>
+    </div>
+  );
+}
+
+/** Clearing every request cannot be undone, so ask first. */
+function ConfirmReset({ count, onCancel, onConfirm }: { count: number; onCancel: () => void; onConfirm: () => void }) {
+  const cancelRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    cancelRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onCancel();
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onCancel]);
+  return (
+    <div className="crew2-confirm" role="alertdialog" aria-labelledby="crew2-confirm-title" aria-describedby="crew2-confirm-body">
+      <h2 id="crew2-confirm-title">
+        すべてのリクエストを消去しますか？ <span lang="en">Clear all requests?</span>
+      </h2>
+      <p id="crew2-confirm-body" lang="en">
+        {count === 1 ? '1 request' : `${count} requests`}, their replies and this flight's numbers are removed from every crew device. This cannot be undone.
+      </p>
+      <div className="crew2-confirm__actions">
+        <button ref={cancelRef} className="crew2-btn ghost" onClick={onCancel}>
+          キャンセル <small lang="en">Cancel</small>
+        </button>
+        <button className="crew2-btn" onClick={onConfirm}>
+          消去 <small lang="en">Clear all</small>
+        </button>
       </div>
     </div>
   );
@@ -344,7 +433,7 @@ function Heard({ e }: { e: Extract<HubEvent, { type: 'understood' }> }) {
   return (
     <div className="crew2-heard" lang="en">
       <span className="crew2-heard__label">
-        <Activity aria-hidden /> Last heard ({languageName(e.lang)}, {(e.asrMs / 1000).toFixed(1)} s)
+        <Activity aria-hidden /> {e.asrMs > 0 ? `Last heard (${languageName(e.lang)}, ${(e.asrMs / 1000).toFixed(1)} s)` : `Last typed (${languageName(e.lang)})`}
       </span>
       <q lang={e.lang}>{e.transcript}</q>
       {need && (

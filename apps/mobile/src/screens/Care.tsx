@@ -78,12 +78,12 @@ export function CareSheet({ lang }: { lang: LangCode }) {
         <Svg width={150} height={270} viewBox={`0 0 ${BODY_MAP_VIEWBOX.width} ${BODY_MAP_VIEWBOX.height}`}>
           {BODY_SHAPES.map((s, i) => {
             const on = r.areas.includes(s.area);
-            const fill = on ? th.p.primary : '#DCE3EE';
+            const fill = on ? th.p.primary : th.p.border;
             const press = () => set({ areas: toggle(r.areas, s.area) });
             return s.kind === 'circle' ? (
-              <Circle key={i} cx={s.cx} cy={s.cy} r={s.r} fill={fill} stroke={on ? th.p.primary : '#9FB0D0'} strokeWidth={2} onPress={press} />
+              <Circle key={i} cx={s.cx} cy={s.cy} r={s.r} fill={fill} stroke={on ? th.p.primary : th.p.textMuted} strokeWidth={2} onPress={press} />
             ) : (
-              <Rect key={i} x={s.x} y={s.y} width={s.w} height={s.h} rx={s.rx} fill={fill} stroke={on ? th.p.primary : '#9FB0D0'} strokeWidth={2} onPress={press} />
+              <Rect key={i} x={s.x} y={s.y} width={s.w} height={s.h} rx={s.rx} fill={fill} stroke={on ? th.p.primary : th.p.textMuted} strokeWidth={2} onPress={press} />
             );
           })}
         </Svg>
@@ -100,7 +100,7 @@ export function CareSheet({ lang }: { lang: LangCode }) {
           return (
             <Pressable
               key={n}
-              onPress={() => set({ pain: n })}
+              onPress={() => set({ pain: r.pain === n ? null : n })}
               accessibilityRole="radio"
               accessibilityState={{ checked: on }}
               accessibilityLabel={`${n}`}
@@ -111,9 +111,7 @@ export function CareSheet({ lang }: { lang: LangCode }) {
           );
         })}
       </View>
-      <T muted>
-        {r.pain}/10 · {painWord(r.pain, lang)}
-      </T>
+      <T muted>{r.pain === null ? tr('care.notRated') : `${r.pain}/10 · ${painWord(r.pain, lang)}`}</T>
 
       <T bold>{tr('care.symptoms')}</T>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: th.space.sm }}>

@@ -1,3 +1,4 @@
+import { JalBrand } from '../components/JalBrand';
 import {
   LANGUAGES,
   languageName,
@@ -125,9 +126,7 @@ export function Onboarding() {
           {step === 'booking' && found && (
             <>
               <View style={{ gap: th.space.xs, marginTop: th.space.lg }}>
-                <Text accessibilityRole="header" style={{ fontSize: th.fs(40), fontWeight: '800', color: th.p.navy === '#000000' ? th.p.text : th.p.navy }}>
-                  Hear<Text style={{ color: th.p.primary }}>Me</Text>
-                </Text>
+                <JalBrand />
               </View>
               <View style={{ backgroundColor: th.p.surface, borderRadius: th.radius.lg, borderWidth: 2, borderColor: th.p.primary, padding: th.space.lg, gap: th.space.sm }}>
                 <T v="heading" role="header">
@@ -149,9 +148,7 @@ export function Onboarding() {
           {step === 'language' && (
             <>
               <View style={{ gap: th.space.xs, marginTop: th.space.lg }}>
-                <Text accessibilityRole="header" style={{ fontSize: th.fs(44), fontWeight: '800', color: th.p.navy === '#000000' ? th.p.text : th.p.navy }}>
-                  Hear<Text style={{ color: th.p.primary }}>Me</Text>
-                </Text>
+                <JalBrand />
                 <T muted>{translator('en')('app.tagline')}</T>
               </View>
               <CyclingHeading />

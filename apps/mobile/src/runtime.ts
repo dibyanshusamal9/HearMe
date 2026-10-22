@@ -27,6 +27,8 @@ import { Platform } from 'react-native';
  */
 export const link = new DemoCabinLink('simulated');
 export const session = new PassengerSession({ link, device: 'phone' });
+// Without a hub, a crew console tab in the same browser (the launcher's preview) takes over from the simulated crew.
+if (Platform.OS === 'web') link.watchForConsole();
 
 // ── Cabin hub ─────────────────────────────────────────────────────────────
 let hubUrl: string | null = null;

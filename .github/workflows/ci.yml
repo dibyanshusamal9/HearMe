@@ -4,7 +4,7 @@ name: CI
 # The offline AI models are not downloaded here: the tests do not need them.
 on:
   push:
-    branches: [hackathon-upgrade, 'claude/**']
+    branches: [main]
   pull_request:
 
 jobs:

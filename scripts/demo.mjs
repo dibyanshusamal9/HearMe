@@ -16,8 +16,12 @@ import { fileURLToPath } from 'node:url';
 const root = fileURLToPath(new URL('..', import.meta.url));
 const args = process.argv.slice(2);
 const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+// Windows: Node runs .cmd files only through a shell (EINVAL since the CVE-2024-27980 fix), and then wants one
+// command string rather than an argument list (DEP0190). The arguments here are fixed words.
+const shell = process.platform === 'win32';
+const npmCommand = (npmArgs) => (shell ? [`${npm} ${npmArgs.join(' ')}`, []] : [npm, npmArgs]);
 const run = (script, extra = []) => {
-  const r = spawnSync(npm, ['run', script, ...extra], { cwd: root, stdio: 'inherit' });
+  const r = spawnSync(...npmCommand(['run', script, ...extra]), { cwd: root, stdio: 'inherit', shell });
   if (r.status !== 0) process.exit(r.status ?? 1);
 };
 
@@ -38,7 +42,7 @@ if (!built || args.includes('--rebuild')) {
 
 console.log('\n▶ Starting the cabin hub…');
 const hubArgs = ['run', 'start', '-w', '@hearme/hub', '--', ...(args.includes('--no-open') ? [] : ['--open'])];
-const hub = spawn(npm, hubArgs, { cwd: root, stdio: 'inherit', env: { ...process.env, ...(noAi ? { HEARME_NO_AI: '1' } : {}) } });
+const hub = spawn(...npmCommand(hubArgs), { cwd: root, stdio: 'inherit', shell, env: { ...process.env, ...(noAi ? { HEARME_NO_AI: '1' } : {}) } });
 hub.on('exit', (code) => process.exit(code ?? 0));
 for (const sig of ['SIGINT', 'SIGTERM']) process.on(sig, () => hub.kill(sig));
 
@@ -57,7 +61,15 @@ async function preflight() {
       srv.listen(port, () => srv.close(() => resolve(true)));
     });
   const running = await fetch('http://localhost:8080/api/status').then((r) => r.json()).catch(() => null);
-  const lan = Object.values(networkInterfaces()).flat().find((a) => a && a.family === 'IPv4' && !a.internal);
+  // Same preference as apps/hub/src/net.ts: HEARME_HOST, then Wi-Fi, then wired, virtual adapters (VirtualBox, WSL, VPNs) last.
+  const VIRTUAL = /vethernet|virtualbox|vbox|vmware|vmnet|hyper-v|wsl|docker|^br-|^veth|utun|tailscale|zerotier/i;
+  const WIRELESS = /wi-?fi|wlan|wireless|^wl|^en0$/i;
+  const rank = ([name, a]) => (VIRTUAL.test(name) || a.address.startsWith('192.168.56.') ? 2 : WIRELESS.test(name) ? 0 : 1);
+  const found = Object.entries(networkInterfaces())
+    .flatMap(([name, list]) => (list ?? []).filter((a) => a.family === 'IPv4' && !a.internal && !a.address.startsWith('169.254.')).map((a) => [name, a]))
+    .sort((x, y) => rank(x) - rank(y));
+  const lan = process.env.HEARME_HOST ? { address: process.env.HEARME_HOST } : found[0]?.[1];
+  const install = (mac, win) => (process.platform === 'win32' ? win : mac);
   const ffmpeg = spawnSync('ffmpeg', ['-version'], { stdio: 'ignore' }).status === 0;
 
   console.log('\nHearMe demo check\n');
@@ -70,12 +82,12 @@ async function preflight() {
     running ? ok(true, `hub already running (speech: ${running.asr?.state}, meaning: ${running.embed?.state})`) : ok((await portFree(8080)) && (await portFree(8443)), 'ports 8080 and 8443 free', 'stop whatever uses them'),
   ];
   ok(!!lan, lan ? `Wi-Fi address ${lan.address}: phones scan the QR at http://${lan.address}:8080/join (set HEARME_HOST to pick another address)` : 'no Wi-Fi/LAN address (phones cannot join; the stage still works)', 'connect to a network or a phone hotspot');
-  ok(ffmpeg, 'ffmpeg (only for native-app audio formats)', 'brew install ffmpeg');
+  ok(ffmpeg, 'ffmpeg (only for native-app audio formats)', install('brew install ffmpeg', 'winget install ffmpeg'));
   const mkcert = spawnSync('mkcert', ['-CAROOT'], { encoding: 'utf8' });
   const ip = lan ? lan.address : '<laptop-ip>';
   if (process.env.HEARME_TLS_CERT) ok(true, 'HTTPS: your own certificate (HEARME_TLS_CERT): nothing for phones to install');
   else if (mkcert.status === 0) ok(true, `HTTPS: mkcert's CA (${mkcert.stdout.trim()}): phones trust it once at http://${ip}:8080/trust`);
-  else ok(true, `HTTPS: built-in local CA: phones trust it once at http://${ip}:8080/trust  (optional: brew install mkcert)`);
+  else ok(true, `HTTPS: built-in local CA: phones trust it once at http://${ip}:8080/trust  (optional: ${install('brew install mkcert', 'winget install FiloSottile.mkcert')})`);
   const fine = required.every(Boolean);
   console.log(fine ? '\nReady: npm run demo\n' : '\nFix the ✗ lines above, then run the check again.\n');
   return fine ? 0 : 1;

@@ -1,6 +1,6 @@
 import { createServer, type Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
-import { mkdtempSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import {
@@ -43,9 +43,10 @@ let server: Server;
 let relay: CabinRelay;
 let base: string;
 let ai: AiEngine;
+let staticDir: string;
 
 beforeEach(async () => {
-  const staticDir = mkdtempSync(join(tmpdir(), 'hearme-static-'));
+  staticDir = mkdtempSync(join(tmpdir(), 'hearme-static-'));
   writeFileSync(join(staticDir, 'index.html'), '<!doctype html><div id="root"></div>');
   ai = new AiEngine({
     asrSize: 'base',
@@ -177,7 +178,19 @@ describe('cabin hub', () => {
 
   it('serves static files without leaving the static folder', async () => {
     expect((await fetch(`${base}/`)).status).toBe(200);
-    expect((await fetch(`${base}/..%2f..%2fetc%2fpasswd`)).status).not.toBe(200);
+    mkdirSync(join(staticDir, 'assets'), { recursive: true });
+    writeFileSync(join(staticDir, 'assets', 'app-1a2b3c4d.js'), 'export {};');
+    const asset = await fetch(`${base}/assets/app-1a2b3c4d.js`);
+    expect(asset.status).toBe(200);
+    expect(asset.headers.get('cache-control')).toContain('immutable');
+    // A secret next to the static folder, reached with '/' or Windows '\' separators.
+    writeFileSync(join(staticDir, '..', 'hearme-secret.txt'), 'secret');
+    for (const p of ['/..%2fhearme-secret.txt', '/..%5chearme-secret.txt', '/assets/..%5c..%5chearme-secret.txt', '/..%2f..%2fetc%2fpasswd']) {
+      const r = await fetch(`${base}${p}`);
+      expect(r.status, p).not.toBe(200);
+      expect(await r.text(), p).not.toContain('secret');
+    }
+    rmSync(join(staticDir, '..', 'hearme-secret.txt'));
   });
 });
 

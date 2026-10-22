@@ -1,3 +1,4 @@
+import { JalBrand } from '../common/JalBrand';
 import {
   languageInfo,
   translator,
@@ -7,7 +8,7 @@ import {
   type NeedPurpose,
   type PassengerSession,
 } from '@hearme/shared';
-import { useSession } from '@hearme/shared/react';
+import { useCrewMode, useSession } from '@hearme/shared/react';
 import { Captions, Hand, House, LogOut, Monitor, Settings2, ShieldCheck, SlidersHorizontal } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { DemoControls } from '../common/DemoControls';
@@ -59,6 +60,7 @@ export function IfeApp({ session, link, seat, idleMs = 180_000, idleGraceSeconds
   const prefs = useSession(session, (s) => s.prefs);
   const replyToShow = useSession(session, (s) => s.replyToShow);
   const unseen = useSession(session, (s) => s.unseenAnnouncement);
+  const crewMode = useCrewMode(link);
   const [stage, setStage] = useState<Stage>(profile ? 'main' : 'attract');
   const [screen, setScreen] = useState<IfeScreen>({ name: 'home' });
   const [confirmEnd, setConfirmEnd] = useState(false);
@@ -163,12 +165,12 @@ export function IfeApp({ session, link, seat, idleMs = 180_000, idleGraceSeconds
     <div className={rootClass} style={rootStyle} lang={languageInfo(lang).bcp47}>
       <header className="ife-top">
         <div className="ife-brand" aria-label="HearMe">
-          Hear<span>Me</span>
+          <JalBrand />
         </div>
         <div className="ife-seat">
           {tr('common.seat')} <strong>{seat}</strong>
         </div>
-        <ConnectionPill session={session} lang={lang} />
+        <ConnectionPill session={session} lang={lang} demo={crewMode === 'simulated'} />
         <button className="ife-top-btn" onClick={() => go({ name: 'settings' })} aria-label={`${tr('settings.language')}: ${languageInfo(lang).nativeName}`}>
           {languageInfo(lang).nativeName}
         </button>

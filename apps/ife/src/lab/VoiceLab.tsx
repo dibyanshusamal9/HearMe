@@ -25,6 +25,7 @@ import { MicRecorder, MicUnavailableError } from '@hearme/shared/web';
 import { ArrowRight, Download, FlaskConical, Mic, RotateCcw, Square, Star, Trash2, Volume2, VolumeX } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { NeedIcon } from '../common/Icon';
+import { JalBrand } from '../common/JalBrand';
 import { hubBaseUrl, useHubStatus } from '../common/hub';
 import { CabinNoise } from '../common/sounds';
 
@@ -339,7 +340,7 @@ export function VoiceLab() {
     <div className="lab">
       <header className="lab-top">
         <a className="stage-brand lab-brand" href="#/">
-          Hear<span>Me</span>
+          <JalBrand />
         </a>
         <span className="lab-title">
           <FlaskConical aria-hidden /> Voice lab

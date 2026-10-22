@@ -6,6 +6,27 @@ import { SimulatedCabinLink, type CabinLink, type NetworkCondition } from './lin
 import type { CrewToPassenger, PassengerToCrew } from './protocol';
 import { WebSocketBus, type WebSocketFactory } from './ws';
 
+const CREW_PRESENCE_CHANNEL = 'hearme-crew-presence-v1';
+const CREW_PRESENCE_INTERVAL_MS = 2000;
+const CREW_PRESENCE_TIMEOUT_MS = 6000;
+
+/**
+ * A crew console tab without a hub: tell passenger tabs in this browser that a
+ * real crew screen is open (see `DemoCabinLink.watchForConsole`).
+ */
+export function announceCrewConsole(): () => void {
+  const BC = (globalThis as { BroadcastChannel?: typeof BroadcastChannel }).BroadcastChannel;
+  if (!BC) return () => undefined;
+  const channel = new BC(CREW_PRESENCE_CHANNEL);
+  channel.onmessage = (ev: MessageEvent) => ev.data === 'who' && channel.postMessage('here');
+  channel.postMessage('here');
+  const beat = setInterval(() => channel.postMessage('here'), CREW_PRESENCE_INTERVAL_MS);
+  return () => {
+    clearInterval(beat);
+    channel.close();
+  };
+}
+
 /**
  * The passenger device's connection to the crew tablet. Its far end is:
  *  - 'hub':       the real cabin hub (`apps/hub`) over a WebSocket. Phones,
@@ -38,6 +59,8 @@ export class DemoCabinLink implements CabinLink {
   private hub: string | null;
   private seat: string | undefined;
   private readonly wsFactory?: WebSocketFactory;
+  /** A presenter picked the mode by hand: stop following crew console tabs. */
+  private manualMode = false;
 
   constructor(mode: CrewMode = 'simulated', options: DemoLinkOptions = {}) {
     this.hub = options.hubUrl ?? null;
@@ -78,6 +101,36 @@ export class DemoCabinLink implements CabinLink {
   }
 
   setMode(mode: CrewMode): void {
+    this.manualMode = true;
+    this.switchMode(mode);
+  }
+
+  /**
+   * Without a hub, follow crew console tabs in this browser: switch to 'console'
+   * while one announces itself, and back to the in-app simulated crew when it
+   * closes. A mode picked with `setMode` (prototype controls) always wins.
+   */
+  watchForConsole(): () => void {
+    const BC = (globalThis as { BroadcastChannel?: typeof BroadcastChannel }).BroadcastChannel;
+    if (!BC) return () => undefined;
+    const channel = new BC(CREW_PRESENCE_CHANNEL);
+    let lastSeen = 0;
+    channel.onmessage = (ev: MessageEvent) => {
+      if (ev.data !== 'here') return;
+      lastSeen = Date.now();
+      if (!this.manualMode && this.modeValue === 'simulated') this.switchMode('console');
+    };
+    channel.postMessage('who');
+    const check = setInterval(() => {
+      if (!this.manualMode && this.modeValue === 'console' && Date.now() - lastSeen > CREW_PRESENCE_TIMEOUT_MS) this.switchMode('simulated');
+    }, CREW_PRESENCE_INTERVAL_MS);
+    return () => {
+      clearInterval(check);
+      channel.close();
+    };
+  }
+
+  private switchMode(mode: CrewMode): void {
     if (mode === this.modeValue) return;
     this.teardown();
     this.build(mode);

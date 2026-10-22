@@ -12,6 +12,7 @@ import { DemoCabinLink, PassengerSession } from '@hearme/shared';
 import { StrictMode, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { detectHub, hubBaseUrl } from './common/hub';
+import { themeVars } from './common/theme';
 import { ifeSeatFromUrl } from './common/webAdapters';
 import { CrewConsole } from './crew/CrewConsole';
 import { IfeApp } from './ife/IfeApp';
@@ -19,7 +20,9 @@ import { VoiceLab } from './lab/VoiceLab';
 import { Launcher, MobilePreview } from './launcher/Launcher';
 import { Stage } from './stage/Stage';
 import './styles.css';
-import './styles-v2.css';
+
+// Shared design tokens as CSS variables on every route; the seatback overrides them for high contrast and text size.
+for (const [name, value] of Object.entries(themeVars(false))) document.documentElement.style.setProperty(name, String(value));
 
 type Route = 'launcher' | 'ife' | 'crew' | 'mobile' | 'stage' | 'lab';
 
@@ -34,8 +37,9 @@ function ifeRuntime() {
   if (!ife) {
     const link = new DemoCabinLink('simulated');
     ife = { link, session: new PassengerSession({ link, device: 'ife' }), seat: ifeSeatFromUrl() };
-    // Use the real cabin hub when this page was served by one.
+    // Use the real cabin hub when this page was served by one; without it, a crew console tab in this browser.
     void detectHub().then((hub) => hub && link.setHubUrl(hubBaseUrl()));
+    link.watchForConsole();
   }
   return ife;
 }

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   contrastRatio, describeStatus, highContrastPalette, isValidSeat, lightPalette, NEEDS, normalizeSeat, LANGUAGES,
   REPLIES, ANNOUNCEMENTS, SAFETY_STEPS, STRINGS, requestTitle, sanitizeName, t, type PassengerRequest,
+  emptyMedicalReport, isUrgentMedical, medicalSummaryLines, parsePassengerMessage,
 } from '../src';
 
 describe('seat validation', () => {
@@ -38,6 +39,9 @@ describe('design tokens meet WCAG AA', () => {
       expect(contrastRatio(p.danger, p.dangerSoft)).toBeGreaterThanOrEqual(4.5);
       expect(contrastRatio(p.warning, p.warningSoft)).toBeGreaterThanOrEqual(4.5);
       expect(contrastRatio(p.primary, p.primarySoft)).toBeGreaterThanOrEqual(4.5);
+      expect(contrastRatio(p.primaryStrong, p.primarySoft)).toBeGreaterThanOrEqual(4.5);
+      expect(contrastRatio(p.onPrimary, p.primaryStrong)).toBeGreaterThanOrEqual(4.5);
+      expect(contrastRatio(p.info, p.infoSoft)).toBeGreaterThanOrEqual(4.5);
     });
   }
 });
@@ -51,4 +55,22 @@ describe('status presentation', () => {
     expect(describeStatus({ ...base, status: 'failed' }, 'en').tone).toBe('danger');
   });
   it('titles the request in the crew language', () => expect(requestTitle(base, 'ja')).toBe('お湯 · 服薬のため'));
+});
+
+describe('Care Mode without a pain number', () => {
+  const report = { ...emptyMedicalReport(), areas: ['chest' as const] };
+  it('starts with no pain level chosen', () => expect(emptyMedicalReport().pain).toBeNull());
+  it('tells the crew the pain was not rated, not "no pain"', () => {
+    expect(medicalSummaryLines(report, 'en')[0]).toBe('Chest · pain not rated');
+    expect(medicalSummaryLines({ ...report, pain: 0 }, 'en')[0]).toBe('Pain 0/10 (No pain): Chest');
+  });
+  it('is urgent only from symptoms when unrated', () => {
+    expect(isUrgentMedical(report)).toBe(false);
+    expect(isUrgentMedical({ ...report, symptoms: ['breathing'] })).toBe(true);
+  });
+  it('travels through the hub protocol', () => {
+    const msg = { type: 'request.create', requestId: 'r1', seat: '23C', device: 'ife', lang: 'en', needId: 'unwell', createdAt: Date.now(), source: 'tap', tags: [], medical: report };
+    expect(parsePassengerMessage(msg)).toMatchObject({ medical: { pain: null, areas: ['chest'] } });
+    expect(parsePassengerMessage({ ...msg, medical: { ...report, pain: 11 } })).toBeNull();
+  });
 });
