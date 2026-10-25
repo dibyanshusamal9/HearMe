@@ -432,15 +432,26 @@ function TypedSheet({ lang, draft }: { lang: LangCode; draft?: string }) {
   // passenger corrects a word instead of starting the whole request again.
   const [text, setText] = useState(draft ?? '');
   const [error, setError] = useState(false);
-  const find = () => {
+  const [busy, setBusy] = useState(false);
+  const [processingError, setProcessingError] = useState(false);
+  const find = async () => {
+    if (busy) return;
     if (!text.trim()) {
       setError(true);
       return;
     }
-    void route(text, 'typed', lang);
+    setProcessingError(false);
+    setBusy(true);
+    try {
+      await route(text, 'typed', lang);
+    } catch {
+      setProcessingError(true);
+    } finally {
+      setBusy(false);
+    }
   };
   return (
-    <Sheet visible title={draft ? tr('ask.fixWords') : tr('home.typeInstead')} onClose={nav.close} closeLabel={tr('common.close')} footer={<Btn big label={tr('speech.findMatch')} onPress={find} icon={(c, s) => <Search color={c} size={s} />} />}>
+    <Sheet visible title={draft ? tr('ask.fixWords') : tr('home.typeInstead')} onClose={nav.close} closeLabel={tr('common.close')} footer={<Btn big disabled={busy} label={tr(busy ? 'speech.processing' : 'speech.findMatch')} onPress={() => void find()} icon={(c, s) => <Search color={c} size={s} />} />}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
         <Type size={20} color={th.p.textMuted} />
         <T muted style={{ flex: 1 }}>
@@ -457,6 +468,7 @@ function TypedSheet({ lang, draft }: { lang: LangCode; draft?: string }) {
         autoFocus
         selectTextOnFocus={!!draft}
         multiline
+        editable={!busy}
         maxLength={200}
         placeholder={tr('speech.typePlaceholder')}
         placeholderTextColor={th.p.textMuted}
@@ -478,6 +490,7 @@ function TypedSheet({ lang, draft }: { lang: LangCode; draft?: string }) {
           {tr('speech.typeEmpty')}
         </T>
       )}
+      {processingError && <T color={th.p.danger} role="alert" live="assertive">{tr('speech.error')}</T>}
     </Sheet>
   );
 }

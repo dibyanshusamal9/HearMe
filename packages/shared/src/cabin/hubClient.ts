@@ -175,7 +175,11 @@ export async function matchOnHub(
   text: string,
   options: { lang: string; target?: UnderstandTarget; timeoutMs?: number },
 ): Promise<UnderstandResult | null> {
-  const { lang, target = 'needs', timeoutMs = 4000 } = options;
+  const { lang, target = 'needs' } = options;
+  const online = usesOnline(lang);
+  // Online matching includes translation followed by Groq. The old four-second
+  // local-model deadline aborted valid online responses before they could submit.
+  const timeoutMs = options.timeoutMs ?? (online ? 30_000 : 4000);
   try {
     return await withTimeout(timeoutMs, async (signal) => {
       const res = await fetch(join(hubUrl, 'api/match'), {
@@ -184,11 +188,11 @@ export async function matchOnHub(
         body: JSON.stringify({ text, lang, target }),
         signal,
       });
-      if (!res.ok && usesOnline(lang)) throw new Error(`Online request processing failed (${res.status}).`);
+      if (!res.ok && online) throw new Error(`Online request processing failed (${res.status}).`);
       return res.ok ? ((await res.json()) as UnderstandResult) : null;
     });
   } catch {
-    if (usesOnline(lang)) throw new Error('Online request processing failed. Try again or select Offline mode.');
+    if (online) throw new Error('Online request processing failed. Try again or select Offline mode.');
     return null;
   }
 }

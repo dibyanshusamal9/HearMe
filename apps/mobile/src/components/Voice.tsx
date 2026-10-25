@@ -49,10 +49,11 @@ export function useRouteTranscript() {
   const nav = useNav();
   return async (transcript: string, source: RequestSource, lang: LangCode, fromHub?: { match?: MatchResult | undefined; many?: UnderstoodRequests | undefined }) => {
     const hub = getHubUrl();
+    const inputLang = session.getState().profile?.speechLang ?? lang;
     // One call: the hub matches the sentence, and each part of it when it holds several requests or refuses something.
-    const understood = fromHub?.match ? fromHub : hub ? ((await matchOnHub(hub, transcript, { lang })) ?? undefined) : undefined;
+    const understood = fromHub?.match ? fromHub : hub ? ((await matchOnHub(hub, transcript, { lang: inputLang })) ?? undefined) : undefined;
     const match = understood?.match ?? defaultMatcher.match(transcript);
-    const otherSubmitted = usesOnline(session.getState().profile?.speechLang ?? lang) && submitUncategorized(session, transcript, source, match, understood?.many);
+    const otherSubmitted = usesOnline(inputLang) && submitUncategorized(session, transcript, source, match, understood?.many);
     const catalogSubmitted = source === 'speech' ? autoSubmitSpeech(session, match, understood?.many) : 0;
     if (otherSubmitted || catalogSubmitted) {
       nav.close(); nav.setTab('requests'); return;
