@@ -6,6 +6,8 @@ Passengers can tap a picture, type, or speak in their language. Crew receive a c
 
 ![HearMe live demo in Online mode, showing a Hindi passenger request and the crew console](docs/screenshots/online-demo.jpg)
 
+[Watch the narrated project demo](docs/demo.mp4) · [English subtitles](docs/demo.srt) · [Walkthrough details](docs/DEMO.md)
+
 ## Latest updates
 
 - **Online / Offline switch** on the right of each interface. Pages start offline; cloud processing requires explicit opt-in.

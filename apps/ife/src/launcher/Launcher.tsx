@@ -57,7 +57,7 @@ export function Launcher() {
         <a className="home-link" href="/seats" target="_blank" rel="noreferrer">
           <Printer aria-hidden /> Printable seat cards (QR + picture card)
         </a>
-        <a className="home-link" href="/demo.mp4" target="_blank" rel="noreferrer">
+        <a className="home-link" href="/demo.mp4?v=20261025" target="_blank" rel="noreferrer">
           <Film aria-hidden /> Recorded demo (75 s)
         </a>
         <a className="home-link" href="#/lab">

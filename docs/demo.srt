@@ -1,0 +1,92 @@
+1
+00:00:00,000 --> 00:00:07,776
+Meet HearMe. A shared conversation between passengers and cabin crew, across languages.
+
+2
+00:00:08,876 --> 00:00:15,501
+Passengers keep a familiar interface. Tap a picture, type a request, or hold
+
+3
+00:00:15,501 --> 00:00:17,540
+the microphone and speak.
+
+4
+00:00:18,640 --> 00:00:27,082
+Online mode starts with explicit consent. Saaras recognizes speech, Groq understands requests, and
+
+5
+00:00:27,082 --> 00:00:29,680
+Sarvam translates supported languages.
+
+6
+00:00:30,780 --> 00:00:36,060
+Here, the passenger types in Hindi: I would like some hot water.
+
+7
+00:00:37,160 --> 00:00:43,170
+After confirmation, the crew receives the hot water request in Japanese and English,
+
+8
+00:00:43,170 --> 00:00:45,944
+with the passenger seat clearly identified.
+
+9
+00:00:47,044 --> 00:00:52,414
+The crew replies with one tap. The passenger reads the reply in Hindi
+
+10
+00:00:52,414 --> 00:00:54,892
+and can hear it through Bulbul.
+
+11
+00:00:55,492 --> 00:00:56,929
+[Hindi crew reply]
+
+12
+00:00:58,129 --> 00:01:03,855
+What if a request has no category? This passenger asks for rum and
+
+13
+00:01:03,855 --> 00:01:05,617
+whisky in Roman Hindi.
+
+14
+00:01:06,717 --> 00:01:12,511
+It arrives as Other request: I want rum and whiskey. The original words
+
+15
+00:01:12,511 --> 00:01:16,077
+stay visible, and a crew member can respond.
+
+16
+00:01:17,177 --> 00:01:25,351
+Choose from fifteen languages. Ten Indian languages and English support online processing. Japanese,
+
+17
+00:01:25,351 --> 00:01:29,753
+Thai, Indonesian and Vietnamese retain local processing.
+
+18
+00:01:30,853 --> 00:01:37,258
+The same cabin announcement appears in the seatback language. Here is the meal
+
+19
+00:01:37,258 --> 00:01:39,229
+service announcement in Tamil.
+
+20
+00:01:39,829 --> 00:01:42,206
+[Meal service announcement in Tamil]
+
+21
+00:01:43,406 --> 00:01:49,958
+Switch back to Offline mode for the original local models. Fixed announcements have
+
+22
+00:01:49,958 --> 00:01:52,982
+bundled recordings in all fifteen languages.
+
+23
+00:01:54,082 --> 00:02:01,762
+HearMe brings passenger requests, crew replies and multilingual announcements into one connected experience.
+

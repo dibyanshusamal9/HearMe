@@ -263,7 +263,7 @@ export function Stage() {
             Then open <code>http://localhost:8080/#/stage</code>. Without the hub you can still try the <a href="#/mobile">phone app</a> and <a href="#/ife">seatback screen</a> with a simulated crew.
           </p>
           <p>
-            <a href="/demo.mp4" target="_blank" rel="noreferrer">
+            <a href="/demo.mp4?v=20261025" target="_blank" rel="noreferrer">
               Watch the recorded demo
             </a>{' '}
             (75 s, works offline).
@@ -328,7 +328,7 @@ export function Stage() {
           <button className="stage-btn" onClick={() => setShowQr(!showQr)} aria-expanded={showQr}>
             <QrCode aria-hidden /> Try on your phone
           </button>
-          <button className="stage-btn ghost" onClick={() => setShowVideo(true)} title="Recorded run of this demo, for when the room's Wi-Fi fails">
+          <button className="stage-btn ghost" onClick={() => setShowVideo(true)} title="Narrated project walkthrough, with captions and actual application screens">
             <Film aria-hidden /> Recorded demo
           </button>
           <button className="stage-btn ghost" onClick={reset} title="Clear requests and reload both sides">
@@ -353,7 +353,7 @@ export function Stage() {
 
       {showVideo && (
         <div className="stage-video" role="dialog" aria-label="Recorded demo" onClick={() => setShowVideo(false)}>
-          <video src="/demo.mp4" controls autoPlay onClick={(e) => e.stopPropagation()} />
+          <video src="/demo.mp4?v=20261025" controls autoPlay onClick={(e) => e.stopPropagation()} />
           <button className="stage-video__close" onClick={() => setShowVideo(false)} aria-label="Close">
             <X aria-hidden />
           </button>
