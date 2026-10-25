@@ -1,0 +1,740 @@
+{
+  "description": "Bundled fixed announcement recordings; no live passenger data. Regenerate when captions change.",
+  "recordings": [
+    {
+      "id": "arrived",
+      "lang": "bn",
+      "textHash": "1cf8d6044af850b1373d87b6737d9ad384af70947e7ebfbb2775d17dd2c4743e",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "arrived",
+      "lang": "en",
+      "textHash": "d6c967c2911f62d1abc8f3651975ce0b3d1cc3c699d5dad827297ae0314d6259",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "arrived",
+      "lang": "gu",
+      "textHash": "c54fc8d8883c28733ed2616120f25a2aa78c2c759be285b6a4f5973aa4a5b0b4",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "arrived",
+      "lang": "hi",
+      "textHash": "8357ceef1daf286364cc54f7b059ade0d4403d345694d9d3f9f04db12c20c275",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "arrived",
+      "lang": "id",
+      "textHash": "9f038621cface9e175455af1d3c2876bdec018acbf575e72b790d0e5f0656123",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "id-ID-GadisNeural"
+    },
+    {
+      "id": "arrived",
+      "lang": "ja",
+      "textHash": "c4749418e3f4a03bae85d8c8d4b709b49454afec8a0b15e799ab820fb2a3ef07",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "ja-JP-NanamiNeural"
+    },
+    {
+      "id": "arrived",
+      "lang": "kn",
+      "textHash": "8ee5d76e44c00683ac38068f5e186fad705f70942c7336bd26f169d8a8ee4388",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "arrived",
+      "lang": "ml",
+      "textHash": "6ac593583c170213f88a1fa565cc6f06e3462395606aa06135af7596ad179aff",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "arrived",
+      "lang": "mr",
+      "textHash": "03596473c5766bdc6af581771c0249075e1aa219edd86781cf9563c6d4068480",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "arrived",
+      "lang": "or",
+      "textHash": "a201a11db708856354160655d6ff58dd0830f57453e8eea5e43514badf306192",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "arrived",
+      "lang": "pa",
+      "textHash": "b6fefd4f1bff7459ab6ecfd8169441ed1cda512a1787d25beba034daaedca5d9",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "arrived",
+      "lang": "ta",
+      "textHash": "bffdd7d866c6cc41860bac44d5a731c45493a0ff53cac23f193f39fa8c014717",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "arrived",
+      "lang": "te",
+      "textHash": "f95380fc8239ad9d785bce061f15cb80952e5108e788412802cf555e3f6d27c4",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "arrived",
+      "lang": "th",
+      "textHash": "1f49e2b0184a668e16299e063967f35906da42ad940e177b2e9d08b9bfa7a15b",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "th-TH-NiwatNeural"
+    },
+    {
+      "id": "arrived",
+      "lang": "vi",
+      "textHash": "9ee59856e06538ec87333826942efac6e3760e6eeb35e9ccf9ff31387f4db94b",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "vi-VN-HoaiMyNeural"
+    },
+    {
+      "id": "descent",
+      "lang": "bn",
+      "textHash": "8b11f68e1a9298c817f09f726548a4b0a905bc1c67bc37194645308d326b69cc",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "descent",
+      "lang": "en",
+      "textHash": "be8f95a5c489b052d05b8746aa72a38971393636e782a95079fa635544474434",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "descent",
+      "lang": "gu",
+      "textHash": "af117e6628465d68057e7a205bf70db455f4003b1121548cb659461b6ac11b10",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "descent",
+      "lang": "hi",
+      "textHash": "14ea7cac1c1e3ffd20c0934b13bb7b01922d81961d3e7e667e4bc531fb45143a",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "descent",
+      "lang": "id",
+      "textHash": "abbf06c5dd970511069da3927eae963ddcb171e7850cde43878399875a9710ec",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "id-ID-GadisNeural"
+    },
+    {
+      "id": "descent",
+      "lang": "ja",
+      "textHash": "8199a0046b52b5dc817265cdf476a85b6a76aeb1ce16acba362b9b0608837580",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "ja-JP-NanamiNeural"
+    },
+    {
+      "id": "descent",
+      "lang": "kn",
+      "textHash": "34b05f5685cfc9dcf5864ac292222affa3135e7470c797aa27393b67ab17e634",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "descent",
+      "lang": "ml",
+      "textHash": "35dacb57476586af41d88d102e4baf4747c01710b79435352f9428e8bc049166",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "descent",
+      "lang": "mr",
+      "textHash": "666ee8204b0676835879fe7914a8a7ddbdb1da3777305e74cd337b7f4ea8c7cf",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "descent",
+      "lang": "or",
+      "textHash": "b05cbfbd6d2423ec0c6d4d4adbc15fb86dbbf0c886de690e368ce364a5a00957",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "descent",
+      "lang": "pa",
+      "textHash": "282d9f1f37331e3fdaa5ae7c2435b20a94570259f3ec9fe70af75f6d05fb6560",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "descent",
+      "lang": "ta",
+      "textHash": "fa37ef8c038a32c533804d6c264af84f8d7a42d5814a9429bd549526f3f2ddc5",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "descent",
+      "lang": "te",
+      "textHash": "1d99e217e0a5e7700c25588122bf226d16ce0245f955efde1652c59ebfc38e31",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "descent",
+      "lang": "th",
+      "textHash": "0a91ec4c3d577a8f8e1f2bc25ad614fc763ca31580ce111f51e8acfced2988e6",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "th-TH-NiwatNeural"
+    },
+    {
+      "id": "descent",
+      "lang": "vi",
+      "textHash": "2df10d7d9aeced33dbe09e4310466b1b9889e2b7a4af27d5e8b9889d3de72628",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "vi-VN-HoaiMyNeural"
+    },
+    {
+      "id": "doctor_call",
+      "lang": "bn",
+      "textHash": "4da5e8a286d73f25b95ea36372e1c93a0019ad3ae5b17e056108b0e5b2cc6509",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "doctor_call",
+      "lang": "en",
+      "textHash": "d9724b087e8419954234ee78dfbfcee52b24a398d20a61e7add810160a6dde08",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "doctor_call",
+      "lang": "gu",
+      "textHash": "3ebba71b438373470c7ae424f0fcde2b8b38d8ebe583f4a1c7c6f6c61984de2d",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "doctor_call",
+      "lang": "hi",
+      "textHash": "81963bef1c9957a7143032248b0793277cafd1b4520781f5911be368654ca2d5",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "doctor_call",
+      "lang": "id",
+      "textHash": "1c715ed283a0e535226b48bfebd17982566bd64c9210ec577dfa48bb56281d9a",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "id-ID-GadisNeural"
+    },
+    {
+      "id": "doctor_call",
+      "lang": "ja",
+      "textHash": "ff035ca54c2d1e0f08f7c0d68a8186effa7092cc4a66184878699cab75ecba8e",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "ja-JP-NanamiNeural"
+    },
+    {
+      "id": "doctor_call",
+      "lang": "kn",
+      "textHash": "a690737cc144678b550b22d74b1564cf0d862fe3ee1e2d35a0ae2b13ade82684",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "doctor_call",
+      "lang": "ml",
+      "textHash": "29257af9ba422e07a6c43b2888ed5097256817afa30401c1f277f87f6c0a70b6",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "doctor_call",
+      "lang": "mr",
+      "textHash": "f1f3fc293bfe38c6ace478385d602d0f55269681b7f4a24f5b567c2b0220b045",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "doctor_call",
+      "lang": "or",
+      "textHash": "edd6c29b9c587d17fd0861b61e83d1353719f1e3021ae03f4ae4a4d26edc9072",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "doctor_call",
+      "lang": "pa",
+      "textHash": "76f496367bb695542ef7ea5fafdc402bc0392e8a33c474c7bce5e898bd33b717",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "doctor_call",
+      "lang": "ta",
+      "textHash": "da7c1ab6dc1fff011b03624c22d223ca5b57c4798618b32dd7c1bec34b3cc001",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "doctor_call",
+      "lang": "te",
+      "textHash": "f84e24c7d93a69e9cc0728974cb12cab0079196b817132f58edb7be9f6d7d592",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "doctor_call",
+      "lang": "th",
+      "textHash": "670d482c60845e3a8b9b8ed00f8ded0b40dd3f0415733e24e860fb7e94a538cf",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "th-TH-NiwatNeural"
+    },
+    {
+      "id": "doctor_call",
+      "lang": "vi",
+      "textHash": "e67e68e9e009df2ad6b8b88fa0a80680d5707942ea986f039a68a4a3aa56dfa9",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "vi-VN-HoaiMyNeural"
+    },
+    {
+      "id": "duty_free",
+      "lang": "bn",
+      "textHash": "d75d41115717119c0e5f720f1a06ae7d5940fdb7a2445e3c3b1bbd20b145ee28",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "duty_free",
+      "lang": "en",
+      "textHash": "ab7663f4ad1563a0413e3f7f48aecafe4ce505fcf183e1a3a640c0d81d941a20",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "duty_free",
+      "lang": "gu",
+      "textHash": "47c41f5c85c25a42411490d2a9418650bcba957045f86fe7239a00b2ca942d83",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "duty_free",
+      "lang": "hi",
+      "textHash": "caa66158f91ccc3967b222ef3f6c4746ae913c843be3effe77c1b23f9e5a17d1",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "duty_free",
+      "lang": "id",
+      "textHash": "345ff3cfa5110191cc62df805d6245e9031c4e77012bfc48274526c952d9272b",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "id-ID-GadisNeural"
+    },
+    {
+      "id": "duty_free",
+      "lang": "ja",
+      "textHash": "7a6809d5e524a94deb5bd4779fe82e960038916f4e76f7b3ad09b0ffd26d05e2",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "ja-JP-NanamiNeural"
+    },
+    {
+      "id": "duty_free",
+      "lang": "kn",
+      "textHash": "509839b3ae1ea7cc9b20a01ea2d5b2fdfdda10acaccb1627ae4d3809ac803944",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "duty_free",
+      "lang": "ml",
+      "textHash": "3c28de70c79ad57377ef1626afbb0743bd648da0b15a34a370afb4750bd90b1b",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "duty_free",
+      "lang": "mr",
+      "textHash": "42ab850ec6df4bbe642e5b75a48f6747a169f3b4eef09fcf5baacd535ff557b1",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "duty_free",
+      "lang": "or",
+      "textHash": "47c1631c9768b9be915d99b8ab2e132e2963183ccc36b7535ebe84ff72fcf847",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "duty_free",
+      "lang": "pa",
+      "textHash": "21e8a11a4b3f3d5abd6c61eb0c1f01c4b4d3365d64ea6ba6ea3ca9a338c80479",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "duty_free",
+      "lang": "ta",
+      "textHash": "62976bb727790da93d22d52889a69286d19dfb8a30c786e07d75fc9d80721d2f",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "duty_free",
+      "lang": "te",
+      "textHash": "9f15ef78357800e4bfd0debb79de63934218e6b30453c4ade861b5694556ee7d",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "duty_free",
+      "lang": "th",
+      "textHash": "8887ec9be8cce1b820e21eba858ea198d0bfcc1f06be8e823ba18ece7c1049e4",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "th-TH-NiwatNeural"
+    },
+    {
+      "id": "duty_free",
+      "lang": "vi",
+      "textHash": "d304e6eb10a4a2999dce5fc0aa4051b0e9c97917283a8b4b028273e7955b430f",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "vi-VN-HoaiMyNeural"
+    },
+    {
+      "id": "meal_service",
+      "lang": "bn",
+      "textHash": "dd7b4dea70142113d733fafb5a15fa2567aa8e4b6285d709cf4603ed83c5eb40",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "meal_service",
+      "lang": "en",
+      "textHash": "70488a7fcf4d7d253de0b7d65377d5708cb501ce77b231b468fd1f3acc3dbfef",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "meal_service",
+      "lang": "gu",
+      "textHash": "fb96be4274ad6e68532502302db945006a7e32f848e9a917eadcf0f19f98adff",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "meal_service",
+      "lang": "hi",
+      "textHash": "6646e3aaaae4e097bffbbcdc8b1914e3edc5f772b38ce8614f268b10e42e0656",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "meal_service",
+      "lang": "id",
+      "textHash": "619e67dc4629adf5bb3065dec5017072721ff53f43991ebc99c5c79cba12cca7",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "id-ID-GadisNeural"
+    },
+    {
+      "id": "meal_service",
+      "lang": "ja",
+      "textHash": "28c025f469b0d0dfa2902d96d9de748a438e61966e5c3ff1f18fd937c90c7941",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "ja-JP-NanamiNeural"
+    },
+    {
+      "id": "meal_service",
+      "lang": "kn",
+      "textHash": "af4e257eb5f309daed7f314e91ab20753f035783ce4a97b59e4ea3ae8b6b89f9",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "meal_service",
+      "lang": "ml",
+      "textHash": "ca674c25febe6bad829f6bd060b85bb173f758a519d4723c17b097bd76fa77f8",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "meal_service",
+      "lang": "mr",
+      "textHash": "6db0c03fdf6151ef9840074ae48f55d2cacec0ace6b38fa84ed9c4438d99fc99",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "meal_service",
+      "lang": "or",
+      "textHash": "47094d941090f7cb4ff35a22237294b680c436aefb7cecc81217d531115efd02",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "meal_service",
+      "lang": "pa",
+      "textHash": "2cc89e94cf61713e7f1cfdd6265e3b7eb130ee035617d45da1a14e0a4ee7387b",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "meal_service",
+      "lang": "ta",
+      "textHash": "1b62b85fc0231b1dc19a03bf1f5f4922ad6de274d41b2b7052b4235d33a772e9",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "meal_service",
+      "lang": "te",
+      "textHash": "619593c2b24b6f12bfa6db3cb4c66efd88c5d82ddf33306abbe17e32382e0495",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "meal_service",
+      "lang": "th",
+      "textHash": "94ec99ecbc152d38ac7767aa30780a3a2727d74e353f06d0f03165b4896c0bba",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "th-TH-NiwatNeural"
+    },
+    {
+      "id": "meal_service",
+      "lang": "vi",
+      "textHash": "02a8352244f992ac552cb901ded39e7992caf21028a2e39df2effac79ee23d58",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "vi-VN-HoaiMyNeural"
+    },
+    {
+      "id": "seatbelt_on",
+      "lang": "bn",
+      "textHash": "4b0f934566bbed7fa179a785c9744290931a14b37b1c49e1a09234fcd7df1c62",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "seatbelt_on",
+      "lang": "en",
+      "textHash": "301b375f96f886727053c2f8030f38bd6b85141d2f1829b2ac3ec289c42a24bb",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "seatbelt_on",
+      "lang": "gu",
+      "textHash": "8c79e18829e20e885a8d93938889b6bd299d255f386b6c3cd490ed1d199a16e4",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "seatbelt_on",
+      "lang": "hi",
+      "textHash": "dca856a2b398c2331bc6ee7eb198793c86633e29a550b446f79907e85dbaff34",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "seatbelt_on",
+      "lang": "id",
+      "textHash": "5369bb7730ab1e6aab7b557ea359aede9c6f59e5db7e1b5cf6a90b52ff8ada3d",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "id-ID-GadisNeural"
+    },
+    {
+      "id": "seatbelt_on",
+      "lang": "ja",
+      "textHash": "5814d68e3b9ed8dd6135bcf76e7eab15be197d569543a5efe3cd887fa3c6d87e",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "ja-JP-NanamiNeural"
+    },
+    {
+      "id": "seatbelt_on",
+      "lang": "kn",
+      "textHash": "fc8c86723c4fb5672701923e76a5827d86019839ebb142f1836b8a7a61aa2eea",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "seatbelt_on",
+      "lang": "ml",
+      "textHash": "64e346bcb463f2cfb74fe0f458e3583a9175e63c4dbaa98d620b41ad1a57c519",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "seatbelt_on",
+      "lang": "mr",
+      "textHash": "ea904e64e61da5b4af169d9321e3f17eda5a4670a24ce640067e73340eadd302",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "seatbelt_on",
+      "lang": "or",
+      "textHash": "f9039f9d0020874baf869cb723549c3368eda51e041a3f602a4454be7dbe808c",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "seatbelt_on",
+      "lang": "pa",
+      "textHash": "667256f3d3f82685af133082e44c1928ae9261c46696a47f1393dcb01cd4ed8c",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "seatbelt_on",
+      "lang": "ta",
+      "textHash": "a32b9f8db4ce39c461b6eecaedd28ec779544bf672b21c4ffabf139bfc20cf81",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "seatbelt_on",
+      "lang": "te",
+      "textHash": "621c69c325db6b189d1260d2c2c156012d4eaddc6f25ba13fb22768ee9c51ce0",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "seatbelt_on",
+      "lang": "th",
+      "textHash": "7ad5eef0f4ce3be6a012a09005e3e84977a62214be14938c30660f52652e88bc",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "th-TH-NiwatNeural"
+    },
+    {
+      "id": "seatbelt_on",
+      "lang": "vi",
+      "textHash": "60487f65757f3e7c810721cc6349d052a568b99a5c5c56d638bbacf44048b0e7",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "vi-VN-HoaiMyNeural"
+    },
+    {
+      "id": "turbulence",
+      "lang": "bn",
+      "textHash": "d4b314a271bc1adb449a94ab7933013a11ed958577bcd855a20cc75dee233b0b",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "turbulence",
+      "lang": "en",
+      "textHash": "55c868670ff0fcaff1c68f64f3319eec08727a319c38456caa0942faf001fb69",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "turbulence",
+      "lang": "gu",
+      "textHash": "338bfd61301a68d8ae057457fbe0d452c2ca22f18a675c76e3c7e6e317ae19d3",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "turbulence",
+      "lang": "hi",
+      "textHash": "084bdda64070bba3a846cbada016f307c504c949989911f7bbcfcd7c31d11097",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "turbulence",
+      "lang": "id",
+      "textHash": "1fe17674b04362bac8be976f533e2498b930e5c9e56451009f4a3385bd509122",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "id-ID-GadisNeural"
+    },
+    {
+      "id": "turbulence",
+      "lang": "ja",
+      "textHash": "d70ae2f3f6a5e9a1ef22917c3a732a624cec4a42f14d2b515cf558df88e13504",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "ja-JP-NanamiNeural"
+    },
+    {
+      "id": "turbulence",
+      "lang": "kn",
+      "textHash": "666bd45cf842135f9099b0984a4cfb6498dc1e15102fe07366c3a1b48357b6a0",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "turbulence",
+      "lang": "ml",
+      "textHash": "23b02b97ac1e3ca2008833aac87024fe5c0a1dda9d610132b40d917801c1e654",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "turbulence",
+      "lang": "mr",
+      "textHash": "19283f94c2d3dc585eb69bb738220a85166a2943aeba08fb85bb134951c90057",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "turbulence",
+      "lang": "or",
+      "textHash": "d82d155390362ac3b5c64a500a1d94e66aa54d623a61e2ae8df0056b901a9409",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "turbulence",
+      "lang": "pa",
+      "textHash": "99132a2d1cf59385a5a3deacd94e8966476b447b6814179ccf90835315d89ea7",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "turbulence",
+      "lang": "ta",
+      "textHash": "c1023a75d6e39107e67f6140033a1b1e8def2a28c69cb04d6cdc0590a85cc352",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "turbulence",
+      "lang": "te",
+      "textHash": "a0853b1e84154eec2e5f27fd3f951918e7c16aedb8557d60142689031a5bd1f5",
+      "provider": "Sarvam Bulbul v3",
+      "voice": "simran"
+    },
+    {
+      "id": "turbulence",
+      "lang": "th",
+      "textHash": "27d1f704c64dc1051c0f5b65d89579e216774e207b6e795d76fad704920504d9",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "th-TH-NiwatNeural"
+    },
+    {
+      "id": "turbulence",
+      "lang": "vi",
+      "textHash": "98c7d44f4b013fb8b8fe9b566c18217699771258cc54bc43f7b894b047927dd2",
+      "provider": "Microsoft Edge TTS (build-time only)",
+      "voice": "vi-VN-HoaiMyNeural"
+    }
+  ]
+}

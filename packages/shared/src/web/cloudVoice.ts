@@ -1,28 +1,47 @@
 import { cloudHeaders, hasCloudConsent } from '../cabin/cloudConsent';
 import { subscribeProcessingMode, usesOnline } from '../cabin/processingMode';
 import type { ReplyVoice, SpeakOutcome } from './tts';
+import { recordedAnnouncementPath, RecordedAnnouncementPlayer } from './recordedAnnouncements';
 
 export function createModeVoice(localVoice: ReplyVoice | null, baseUrl: () => string): ReplyVoice {
   const local: ReplyVoice = localVoice ?? { hasVoice: async () => false, speak: () => ({ done: Promise.resolve('no-voice'), stop() {} }), unlock() {}, stop() {} };
   const player = new BulbulPlayer(baseUrl);
+  const recorded = new RecordedAnnouncementPlayer();
   let settleCurrent: ((value: SpeakOutcome) => void) | undefined;
-  const stop = () => { player.clear(); local.stop(); settleCurrent?.('stopped'); settleCurrent = undefined; };
+  let generation = 0;
+  const stop = () => { generation++; player.clear(); recorded.stop(); local.stop(); settleCurrent?.('stopped'); settleCurrent = undefined; };
   subscribeProcessingMode(stop);
   const language = (bcp47: string) => bcp47.toLowerCase().split('-')[0]!;
   return {
     hasVoice: (bcp47) => usesOnline(language(bcp47)) ? Promise.resolve(true) : local.hasVoice(bcp47),
     unlock: () => local.unlock(), stop,
     speak(text, bcp47, options = {}) {
-      local.stop(); player.stop(); settleCurrent?.('stopped');
-      if (!usesOnline(language(bcp47))) return local.speak(text, bcp47, options);
+      local.stop(); player.stop(); recorded.stop(); settleCurrent?.('stopped');
+      const job = ++generation;
       let finished = false;
       let settle!: (value: SpeakOutcome) => void;
       const done = new Promise<SpeakOutcome>((resolve) => { settle = (value) => { if (!finished) { finished = true; resolve(value); } }; });
       settleCurrent = settle;
-      void player.play(text, language(bcp47), () => settle('played'), () => settle('blocked')).then(() => {
-        if (!finished) options.onStart?.();
-      });
-      return { done, stop: () => { player.stop(); settle('stopped'); } };
+      const live = () => {
+        if (job !== generation || finished) return;
+        if (!usesOnline(language(bcp47))) {
+          const handle = local.speak(text, bcp47, options);
+          void handle.done.then(settle);
+          return;
+        }
+        void player.play(text, language(bcp47), () => settle('played'), () => settle('blocked')).then(() => {
+          if (!finished && job === generation) options.onStart?.();
+        });
+      };
+      const path = recordedAnnouncementPath(text, bcp47);
+      if (path && typeof Audio !== 'undefined') {
+        recorded.play(`${baseUrl().replace(/\/$/, '')}${path}`, () => options.onStart?.(), () => settle('played'), reason => {
+          if (job !== generation || finished) return;
+          if (reason === 'blocked') settle('blocked');
+          else live();
+        }, options.rate);
+      } else live();
+      return { done, stop: () => { if (job === generation) stop(); else settle('stopped'); } };
     },
   };
 }

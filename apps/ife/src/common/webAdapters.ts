@@ -19,7 +19,7 @@ if (typeof window !== 'undefined') {
 }
 
 export const browserSpeaker: Speaker = {
-  available: () => localVoice !== null || getProcessingMode() === 'online',
+  available: () => typeof Audio !== 'undefined' || localVoice !== null || getProcessingMode() === 'online',
   speak(text, bcp47) {
     void voice.speak(text, bcp47).done.then((outcome) => {
       window.dispatchEvent(new CustomEvent('hearme-playback', { detail: outcome }));

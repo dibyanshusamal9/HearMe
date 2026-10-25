@@ -8,6 +8,8 @@ Other Asian languages remain on the local engine. Offline requests never select 
 
 Recordings and synthesized audio are not persisted in the normal service path. Translation uses a bounded sixty-second memory cache. One synthesized reply may remain in browser memory for replay; clearing or stopping the mode voice releases it. Provider retention follows the configured account agreements. The development voice lab keeps its original explicit recording-retention option.
 
+The fixed announcement catalogue has separate, pre-generated MP3 assets in every selectable language. These contain only public template text. Bulbul generates Indian-language/English clips; Microsoft Edge TTS generates the four other Asian-language clips at build-time asset preparation. Neither receives passenger data through that generation command. Normal recorded-announcement playback serves these bundled files from the hub without a TTS provider call. Custom announcements keep the ordinary consent-controlled provider/device route.
+
 Spoken requests now submit automatically after a pause when catalogue matching is confident. Refusals and uncertain matches are excluded; duplicate suppression and seat-scoped delivery remain enforced. Typed and picture requests keep their review screen. All passengers see delivery state, and an AI response cannot claim crew receipt.
 
 Keep keys in the server `.env`, outside Git and public client configuration. Cloud consent headers are not authentication; add access control at the deployment boundary.

@@ -13,6 +13,7 @@ Passengers can tap a picture, type, or speak in their language. Crew receive a c
 - **Online voice:** Sarvam Saaras for transcription, Groq for catalogue keyword extraction, Sarvam translation and Bulbul v3 for spoken replies.
 - **Other Asian languages stay local**, including Japanese, Thai, Indonesian and Vietnamese.
 - **Announcements follow the passenger's language** for both captions and voice, including after a language change. All seven fixed announcements have captions in every selectable language.
+- **Recorded announcement audio in all 15 languages**, including Japanese, Thai, Indonesian and Vietnamese. Fixed announcements play bundled MP3s without needing an installed device voice or a live speech-provider request.
 - **Crew announcement language selector** for custom spoken or typed announcements. Translations cover all selectable languages, with failures listed before sending.
 - **Phone microphone without CA installation** through an optional private HTTPS Cloudflare link. The crew console remains local.
 - **A unique QR for each seat**, preserving the private entry link when the seat changes. Live local links follow the current Wi-Fi address; restarting the tunnel supplies a new URL to the live QR displays.
@@ -122,7 +123,9 @@ The seven fixed announcements cover seatbelt, turbulence, meal service, duty-fre
 
 For a custom announcement, choose **Announcement language**, speak or type, translate, review the previews, then send to all seats. Failed language translations are listed before sending. Each passenger sees their selected language and hears that caption through Bulbul or an available device voice.
 
-Seatback announcements play when voice is enabled, with replay in the banner and announcement list. Changing the passenger language updates announcement playback. Offline speech needs an installed language voice; browser autoplay may require a tap first.
+Seatback announcements play when voice is enabled, with replay in the banner and announcement list. Changing the passenger language updates announcement playback. The seven fixed announcements use bundled recordings in all fifteen languages, in either mode. Custom announcements still use Bulbul for supported Online languages or an installed device voice otherwise. Browser autoplay may require a tap first.
+
+Recordings are stored in `apps/mobile/public/announcements/` and served at `/mobile/announcements/`. The Indian-language and English recordings use Bulbul v3; the other four use Microsoft Edge TTS at asset-generation time only. No passenger data is sent to Microsoft at runtime. Regenerating the recordings requires server credentials, Python with `edge-tts`, and `npm run announcements:audio`; normal playback needs none of those generation tools. The bundled manifest records each clip's source and caption hash.
 
 ## Project structure
 
