@@ -21,7 +21,7 @@ export interface HubStatus {
    * `join` opens the browser app directly for seat 23C. Certificate setup
    * (`trust`) is optional and is never part of the passenger QR flow.
    */
-  urls?: { base: string; lan: string[]; trust?: string; join?: string; passengerBase?: string };
+  urls?: { base: string; lan: string[]; trust?: string; join?: string; passengerBase?: string; phoneLink?: string };
   clients?: number;
   /** Speech/matching jobs waiting on the hub right now. */
   queue?: number;

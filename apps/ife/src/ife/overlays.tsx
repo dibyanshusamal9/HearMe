@@ -153,7 +153,7 @@ export function CaptionToast({ session, lang, onOpen, speaker }: { session: Pass
     if (cap && voice && speaker?.available()) speaker.speak(cap.text, findLanguage(cap.lang)?.bcp47 ?? cap.lang);
     return () => speaker?.stop();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [a?.id, voice, lang]);
+    }, [a?.id, voice, cap?.text, cap?.lang]);
   if (!cap) return null;
   return (
     <div className={`ife-toast${cap.safety ? ' safety' : ''}`} role={cap.safety ? 'alert' : 'status'}>

@@ -175,7 +175,7 @@ function CaptionToast({ lang }: { lang: LangCode }) {
     replyVoice.speak(cap.text, findLanguage(cap.lang)?.bcp47 ?? cap.lang);
     return () => replyVoice.stop();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [a?.id, voice]);
+  }, [a?.id, voice, cap?.text, cap?.lang]);
   if (!a || !cap) return null;
   const tr = translator(lang);
   const bg = cap.safety ? th.p.primary : th.p.navy;

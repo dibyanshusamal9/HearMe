@@ -174,6 +174,9 @@ describe('cabin hub', () => {
     expect(t.texts.ja).toBe('まもなく着陸します');
     expect(t.texts.hi).toBe('[ja→hi] まもなく着陸します');
     expect(t.texts.en).toBe('[ja→en] まもなく着陸します');
+    expect(t.texts.ta).toBe('[ja→ta] まもなく着陸します');
+    expect(t.texts.or).toBe('[ja→or] まもなく着陸します');
+    expect(t.sourceLang).toBe('ja');
     expect((await fetch(`${base}/api/announce/translate`, { method: 'POST', body: JSON.stringify({ text: '' }) })).status).toBe(400);
     const crew = new RemoteCrewTablet(base, { factory });
     const link = new DemoCabinLink('hub', { hubUrl: base, wsFactory: factory });

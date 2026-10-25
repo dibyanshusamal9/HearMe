@@ -32,6 +32,36 @@ const BASE_CSS = `
   .brand{font-weight:800;letter-spacing:-.02em}.brand span{color:#EF5B3B}
 `;
 
+/** Live screens follow network/tunnel changes; printed cards must be regenerated. */
+const LIVE_QR = `<script>
+(function () {
+  async function refresh() {
+    if (document.hidden) return;
+    try {
+      var response = await fetch('/api/status', { cache: 'no-store' });
+      if (!response.ok) return;
+      var status = await response.json();
+      if (!status.urls || !status.urls.join) return;
+      document.querySelectorAll('[data-passenger-qr]').forEach(function (box) {
+        var target = new URL(status.urls.join);
+        target.searchParams.set('seat', box.dataset.seat);
+        if (target.href === box.dataset.url) return;
+        var image = document.createElement('img');
+        image.alt = 'HearMe seat ' + box.dataset.seat;
+        image.src = '/api/qr.svg?size=' + box.dataset.size + '&data=' + encodeURIComponent(target.href);
+        box.replaceChildren(image); box.dataset.url = target.href;
+      });
+      document.querySelectorAll('[data-passenger-link]').forEach(function (link) { link.href = status.urls.join; });
+      var label = document.getElementById('phone-url');
+      if (label) label.textContent = status.urls.join;
+      var hint = document.getElementById('join-hint');
+      if (hint) hint.textContent = new URL(status.urls.join).pathname === '/phone-join' ? 'Scan with an internet-connected phone. No CA certificate installation is needed. You become seat 23C.' : 'Join the same Wi-Fi as this laptop, then scan. You become the passenger in seat 23C.';
+    } catch (_) { /* retain the last usable QR while the network reconnects */ }
+  }
+  setInterval(refresh, 5000); window.addEventListener('focus', refresh); refresh();
+})();
+</script>`;
+
 export async function seatCardsPage(urlFor: (seat: string) => string, seats: string[]): Promise<string> {
   const picks = COMMON_NEEDS.filter((n) => EMOJI[n.id]).slice(0, 8);
   const cards = await Promise.all(
@@ -42,7 +72,7 @@ export async function seatCardsPage(urlFor: (seat: string) => string, seats: str
         .join('');
       return `<section class="card">
         <header><div class="brand">Hear<span>Me</span></div><div class="seat">${seat}</div></header>
-        <div class="row"><div class="qr">${await qrSvg(url, 150)}</div>
+        <div class="row"><div class="qr" data-passenger-qr data-seat="${esc(seat)}" data-size="150" data-url="${esc(url)}">${await qrSvg(url, 150)}</div>
         <p class="how">Scan with your phone camera.<br>No app needed.<br><span>कैमरे से स्कैन करें · カメラで読み取り · สแกนด้วยกล้อง · Pindai dengan kamera · Quét bằng camera</span></p></div>
         <p class="point">No phone? Point at a picture. · 指さしてください</p>
         <div class="tiles">${tiles}</div>
@@ -58,7 +88,7 @@ export async function seatCardsPage(urlFor: (seat: string) => string, seats: str
   .card{background:#fff;border:2px solid #13233A;border-radius:18px;padding:14px 16px;break-inside:avoid}
   .card header{display:flex;justify-content:space-between;align-items:center}
   .card .brand{font-size:20px}.seat{font-size:28px;font-weight:800}
-  .row{display:flex;gap:12px;align-items:center;margin-top:6px}.qr svg{display:block;width:120px;height:120px}
+  .row{display:flex;gap:12px;align-items:center;margin-top:6px}.qr svg,.qr img{display:block;width:120px;height:120px}
   .how{margin:0;font-weight:700;font-size:15px;line-height:1.35}.how span{display:block;margin-top:6px;font-weight:500;font-size:11px;color:#46546B}
   .point{margin:10px 0 6px;font-size:12px;font-weight:700;color:#C8432A}
   .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
@@ -68,7 +98,7 @@ export async function seatCardsPage(urlFor: (seat: string) => string, seats: str
   @media print{body{background:#fff;padding:0}.bar{display:none}.grid{gap:8px}}
   </style></head><body>
   <div class="bar"><div><span class="brand" style="font-size:22px">Hear<span>Me</span></span> · seat-pocket cards (${seats.length} seats)</div><button onclick="print()">Print</button></div>
-  <div class="grid">${cards.join('')}</div></body></html>`;
+  <div class="grid">${cards.join('')}</div>${LIVE_QR}</body></html>`;
 }
 
 export async function joinPage(phoneUrl: string, crewUrl: string, stageUrl: string): Promise<string> {
@@ -77,20 +107,20 @@ export async function joinPage(phoneUrl: string, crewUrl: string, stageUrl: stri
   body{min-height:100vh;display:grid;place-items:center;padding:24px}
   main{background:#fff;border-radius:24px;padding:28px 32px;max-width:720px;box-shadow:0 20px 50px rgba(19,35,58,.12);display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center}
   h1{margin:0 0 6px;font-size:30px;letter-spacing:-.02em}p{margin:0 0 10px;color:#46546B;line-height:1.45}
-  .qr svg{display:block;width:260px;height:260px}code{font-size:13px;background:#F4F6FA;padding:2px 6px;border-radius:6px;word-break:break-all}
+  .qr svg,.qr img{display:block;width:260px;height:260px}code{font-size:13px;background:#F4F6FA;padding:2px 6px;border-radius:6px;word-break:break-all}
   .note{font-size:13px;background:#FFF3D6;color:#6B4A00;padding:10px 12px;border-radius:12px}
   a{color:#1F6FEB;font-weight:700}
   @media (max-width:640px){main{grid-template-columns:1fr}}
   </style></head><body><main>
-  <div class="qr">${await qrSvg(phoneUrl, 260)}</div>
+  <div class="qr" data-passenger-qr data-seat="23C" data-size="260" data-url="${esc(phoneUrl)}">${await qrSvg(phoneUrl, 260)}</div>
   <div><div class="brand" style="font-size:22px">Hear<span>Me</span></div>
   <h1>Try it on your phone</h1>
-  <p>Join the same Wi-Fi as this laptop, then scan. You become the passenger in seat 23C.</p>
-  <p><code>${esc(phoneUrl)}</code></p>
-  <p><a href="${esc(phoneUrl)}">Open HearMe in your browser</a></p>
+  <p id="join-hint">${new URL(phoneUrl).pathname === '/phone-join' ? 'Scan with an internet-connected phone. No CA certificate installation is needed. You become seat 23C.' : 'Join the same Wi-Fi as this laptop, then scan. You become the passenger in seat 23C.'}</p>
+  <p><code id="phone-url">${esc(phoneUrl)}</code></p>
+  <p><a data-passenger-link href="${esc(phoneUrl)}">Open HearMe in your browser</a></p>
   <p class="note">No app download or installation needed. Tap a picture or type your request. Voice input is available when the cabin uses trusted HTTPS.</p>
   <p><a href="${esc(crewUrl)}">Crew console</a> · <a href="${esc(stageUrl)}">Demo stage</a> · <a href="/seats">Seat cards</a></p></div>
-  </main></body></html>`;
+  </main>${LIVE_QR}</body></html>`;
 }
 
 export interface TrustPageInfo {

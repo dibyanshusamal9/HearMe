@@ -6,4 +6,4 @@ See [Online and Offline modes](MODES.md) for the current request, translation an
 
 See [validation results and limitations](VALIDATION.md) for the checks performed on this update.
 
-The [original offline README](legacy/README-offline.md), [offline language report](legacy/languages-offline.md), demo videos, decks and architecture images were inherited from upstream. They describe the older offline prototype unless explicitly regenerated. Their measurements and offline claims do not describe the Tara runtime. See the current root README and guides for online behavior.
+The [original offline README](legacy/README-offline.md), [offline language report](legacy/languages-offline.md), demo videos, decks and architecture images were inherited from upstream. They describe the older offline prototype unless explicitly regenerated. Their measurements and offline claims do not describe the current dual-mode runtime. New README screenshots were captured from the current project. See the root README and guides for online behavior and optional private phone HTTPS access.

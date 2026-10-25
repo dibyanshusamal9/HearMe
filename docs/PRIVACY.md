@@ -11,3 +11,7 @@ Recordings and synthesized audio are not persisted in the normal service path. T
 Spoken requests now submit automatically after a pause when catalogue matching is confident. Refusals and uncertain matches are excluded; duplicate suppression and seat-scoped delivery remain enforced. Typed and picture requests keep their review screen. All passengers see delivery state, and an AI response cannot claim crew receipt.
 
 Keep keys in the server `.env`, outside Git and public client configuration. Cloud consent headers are not authentication; add access control at the deployment boundary.
+
+## Optional private phone tunnel
+
+`npm run phone-link` is a separately opted-in, temporary Cloudflare HTTPS route for the browser phone. Phone recordings, requests, cabin replies and announcements pass through Cloudflare, even when inference uses Offline mode. This transport requires internet access. It does not expose crew/observer WebSocket roles, crew commands, the console, lab or administrative APIs. Access uses a private link exchanged for a secure HttpOnly cookie, with a two-hour lifetime. The helper binds only to loopback, limits request sizes and rates, and retains no recordings. Its state and executable live in ignored `.npm-cache` files. Keep the link private and stop the helper to end access. Provider and transport retention are subject to the respective service agreements.

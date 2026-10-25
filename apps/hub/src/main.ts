@@ -12,6 +12,7 @@
  *   HEARME_NO_AI=1          skip the AI models (taps and typing still work)
  */
 import { spawn } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import { createServer as createHttpServer } from 'node:http';
 import { createServer as createHttpsServer } from 'node:https';
 import { setPriority } from 'node:os';
@@ -35,6 +36,16 @@ const HTTP_PORT = Number(process.env.PORT ?? 8080);
 const HTTPS_PORT = Number(process.env.HTTPS_PORT ?? 8443);
 const STATIC_DIR = process.env.STATIC_DIR ?? fileURLToPath(new URL('../../ife/dist/', import.meta.url));
 const VERSION = '0.2.0';
+const PHONE_LINK_STATE = fileURLToPath(new URL('../../../.npm-cache/phone-link.json', import.meta.url));
+function activePhoneLink(): string | undefined {
+  try {
+    const state = JSON.parse(readFileSync(PHONE_LINK_STATE, 'utf8')) as { pid: number; expiresAt: number; url: string };
+    const url = new URL(state.url);
+    if (state.expiresAt <= Date.now() || !Number.isInteger(state.pid) || url.protocol !== 'https:' || !url.hostname.endsWith('.trycloudflare.com')) return undefined;
+    process.kill(state.pid, 0);
+    return url.href;
+  } catch { return undefined; }
+}
 
 // Keep the laptop responsive for the browser during a live demo.
 try {
@@ -62,7 +73,7 @@ const urls = (): PublicUrls => {
   // Keep certificate setup optional. Casual passengers open the app directly.
   const trust = httpsOk && certificate?.caPem ? `${http}/trust` : undefined;
   const passengerBase = httpsOk && certificate?.source === 'custom' && !certificate.caPem ? base : http;
-  const out: PublicUrls = { base, lan: currentLan, trust, passengerBase };
+  const out: PublicUrls = { base, lan: currentLan, trust, passengerBase, phoneLink: activePhoneLink() };
   out.join = joinUrl(out, '23C');
   return out;
 };

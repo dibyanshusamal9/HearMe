@@ -342,7 +342,7 @@ export function Stage() {
           <img src={`/api/qr.svg?size=240&data=${encodeURIComponent(phoneUrl)}`} alt="QR code to open HearMe as seat 23C" width={240} height={240} />
           <div>
             <b>Scan with your phone camera</b>
-            <p>Same Wi-Fi as this laptop. You become seat 23C.</p>
+            <p>{phoneUrl.includes('/phone-join?') ? 'Use any internet connection. No CA installation. You become seat 23C.' : 'Same Wi-Fi as this laptop. You become seat 23C.'}</p>
             <code>{phoneUrl}</code>
             <p className="stage-qr__note">
               No app to install. HearMe opens in your browser. Tap pictures or type; voice input requires trusted HTTPS.

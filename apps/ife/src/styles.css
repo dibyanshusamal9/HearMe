@@ -2396,6 +2396,21 @@ svg {
   color: var(--c-text);
   resize: vertical;
 }
+.crew2-own__label label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.crew2-own__label select {
+  min-height: 44px;
+  padding: 8px;
+  border: 1px solid var(--c-border);
+  border-radius: 10px;
+  background: var(--c-surface);
+  color: var(--c-text);
+  font: inherit;
+  font-size: 16px;
+}
 .crew2-own__who {
   display: flex;
   gap: 14px;

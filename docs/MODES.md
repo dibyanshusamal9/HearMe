@@ -20,9 +20,13 @@ Crew receive catalogue keywords in the existing console and answer normally. The
 
 Seatback announcements automatically play when voice output is enabled (the default). The announcement banner and announcements list also have replay controls. The seatback unlocks audio on the first real tap or keypress. If an offline language voice is missing, the interface reports it instead of claiming audio played. Offline audio requires an installed device voice. Safety announcements keep their fixed, pretranslated text.
 
+The seven fixed announcements include bundled captions for every selectable language. Their text and playback follow the passenger's current language, including after a language change. These are prototype drafts awaiting native-speaker and airline review. For an announcement in the crew's own words, select **Announcement language** before speaking or typing, translate, review the language previews and send. Translation covers all fifteen selectable languages; failed languages are listed before sending. The broadcast preserves its source language rather than assuming Japanese.
+
 The retired Tara screen, wake phrase and chat/follow-up flow are removed. Keep the page visible while recording. Switching modes or leaving the recording screen stops recording; switching offline stops pending cloud playback. Already forwarded provider requests cannot be recalled.
 
 ## Setup and checks
+
+For browser microphone access without installing a local CA certificate, install Cloudflare's `cloudflared` client and run `npm run phone-link` alongside the hub. Use the private HTTPS phone link it prints. This optional transport routes phone traffic through Cloudflare over the internet, in either processing mode, and leaves crew access local. It expires after two hours. The live QR displays retain each seat and follow the active link; local addresses follow Wi-Fi changes. Printed cards need regenerating after an address/link change.
 
 Phone microphone access requires **trusted HTTPS** in both modes. Being connected to the cabin hub over plain HTTP lets requests and replies work, but the phone browser still blocks its microphone. If voice reports that the page needs to be secure, tap **Set up voice on this phone**. The setup page keeps your seat and opens the HTTPS app after the phone trusts the local demo hub's certificate. Allow microphone access when the browser asks. Use Chrome on Android or Safari on iPhone rather than a QR scanner's embedded browser.
 

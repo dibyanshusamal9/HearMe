@@ -1,6 +1,7 @@
 import { fallbackLang } from '../i18n/languages';
 import type { Announcement, IconName, LangCode, Localized } from '../types';
 import { L } from './needs';
+import { ANNOUNCEMENT_TRANSLATIONS } from './announcementTranslations';
 
 /**
  * Pre-translated announcement captions the crew can push to passengers.
@@ -16,7 +17,7 @@ export interface AnnouncementTemplate {
   text: Localized;
 }
 
-export const ANNOUNCEMENTS: AnnouncementTemplate[] = [
+const CORE_ANNOUNCEMENTS: AnnouncementTemplate[] = [
   {
     id: 'seatbelt_on',
     icon: 'shield',
@@ -110,6 +111,11 @@ export const ANNOUNCEMENTS: AnnouncementTemplate[] = [
   },
 ];
 
+export const ANNOUNCEMENTS: AnnouncementTemplate[] = CORE_ANNOUNCEMENTS.map(template => ({
+  ...template,
+  text: { ...template.text, ...ANNOUNCEMENT_TRANSLATIONS[template.id] },
+}));
+
 export function getAnnouncement(id: string): AnnouncementTemplate | undefined {
   return ANNOUNCEMENTS.find((a) => a.id === id);
 }
@@ -129,13 +135,14 @@ export interface Caption {
 export function captionOf(a: Pick<Announcement, 'templateId' | 'broadcast'>, lang: LangCode): Caption | undefined {
   const b = a.broadcast;
   if (b) {
+    const sourceLang = b.sourceLang ?? 'ja';
     const shown = [lang, fallbackLang(lang), 'en'].find((l) => b.texts[l]);
     return {
       text: shown ? b.texts[shown]! : b.original,
-      lang: shown ?? 'ja',
+      lang: shown ?? sourceLang,
       icon: b.sender === 'captain' ? 'plane-takeoff' : 'bell-ring',
       safety: false,
-      machine: shown !== undefined && shown !== 'ja',
+      machine: shown !== undefined && shown !== sourceLang,
       sender: b.sender,
     };
   }

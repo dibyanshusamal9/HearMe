@@ -234,14 +234,16 @@ export interface Announcement {
 }
 
 /**
- * What the captain or a crew member said or typed in their own words (in
- * Japanese), machine-translated offline into each language on board. Shown
+ * What the captain or a crew member said or typed in their chosen language,
+ * translated using the selected processing mode into passenger languages. Shown
  * to passengers marked as machine-translated. Safety announcements stay
  * fixed, human-written templates.
  */
 export interface BroadcastMessage {
   sender: 'captain' | 'crew';
   original: string;
+  /** Original language. Older broadcasts without this field used Japanese. */
+  sourceLang?: LangCode;
   /** Translations by language code, including the original's own language. */
   texts: Record<string, string>;
 }

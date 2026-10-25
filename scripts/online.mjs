@@ -25,8 +25,8 @@ if (!built || args.includes('--rebuild')) {
   const build = spawnSync(...command(['run', 'build']), { cwd: root, stdio: 'inherit', shell });
   if (build.status !== 0) process.exit(build.status ?? 1);
 }
-if (!process.env.SARVAM_API_KEY || !process.env.GROQ_API_KEY) console.warn('Add SARVAM_API_KEY and GROQ_API_KEY to .env to enable the optional Tara route. Original workflows are independent of these keys.');
+if (!process.env.SARVAM_API_KEY || !process.env.GROQ_API_KEY) console.warn('Add SARVAM_API_KEY and GROQ_API_KEY to .env to enable Online mode. Offline workflows are independent of these keys.');
 const hub = spawn(...command(['run', 'start', '-w', '@hearme/hub']), { cwd: root, stdio: 'inherit', shell, env: process.env });
-console.log('Original app: http://localhost:8080/ · Optional Tara: http://localhost:8080/#/assistant');
+console.log('HearMe: http://localhost:8080/ · Demo: http://localhost:8080/#/stage · Select Online or Offline mode in the app.');
 hub.on('exit', (code) => process.exit(code ?? 0));
 for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => hub.kill(signal));

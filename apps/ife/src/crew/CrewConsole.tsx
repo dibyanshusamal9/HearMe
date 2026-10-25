@@ -22,6 +22,7 @@ import {
   type LangCode,
   languageInfo,
   languageName,
+  LANGUAGES,
   lookupBookingOnHub,
   medicalSummaryLines,
   type PassengerProfile,
@@ -343,9 +344,10 @@ function Console({ tablet, viaHub }: { tablet: CrewTabletApi; viaHub: boolean })
 function OwnAnnouncement({ tablet }: { tablet: CrewTabletApi }) {
   const rec = useRef(new MicRecorder());
   const [sender, setSender] = useState<'crew' | 'captain'>('crew');
+  const [sourceLang, setSourceLang] = useState<LangCode>('ja');
   const [text, setText] = useState('');
   const [phase, setPhase] = useState<'idle' | 'listening' | 'hearing' | 'translating'>('idle');
-  const [result, setResult] = useState<{ source: string; texts: Record<string, string> } | null>(null);
+  const [result, setResult] = useState<{ source: string; sourceLang: LangCode; texts: Record<string, string>; failed: string[] } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
   useEffect(() => () => rec.current.cancel(), []);
@@ -365,7 +367,7 @@ function OwnAnnouncement({ tablet }: { tablet: CrewTabletApi }) {
   const hear = async () => {
     setPhase('hearing');
     try {
-      const res = await recordAndUnderstand(rec.current, hubBaseUrl(), 'ja', 'replies');
+      const res = await recordAndUnderstand(rec.current, hubBaseUrl(), sourceLang, 'replies');
       if (res.transcript.trim()) setText(res.transcript.trim());
     } catch {
       setError('Could not hear that. Type the announcement instead.');
@@ -379,16 +381,16 @@ function OwnAnnouncement({ tablet }: { tablet: CrewTabletApi }) {
     setError(null);
     setSent(false);
     try {
-      const res = await fetch(`${hubBaseUrl()}/api/announce/translate`, { method: 'POST', headers: processingHeaders(), body: JSON.stringify({ text: source, from: 'ja' }) });
-      const body = (await res.json()) as { texts?: Record<string, string>; error?: string };
+      const res = await fetch(`${hubBaseUrl()}/api/announce/translate`, { method: 'POST', headers: processingHeaders(), body: JSON.stringify({ text: source, from: sourceLang }) });
+      const body = (await res.json()) as { texts?: Record<string, string>; failed?: string[]; error?: string };
       if (!res.ok || !body.texts) throw new Error(body.error ?? 'translation failed');
-      setResult({ source, texts: body.texts });
+      setResult({ source, sourceLang, texts: body.texts, failed: body.failed ?? [] });
     } catch (e) {
       setError(`Could not translate: ${e instanceof Error ? e.message : String(e)}`);
     }
     setPhase('idle');
   };
-  const fresh = result && result.source === text.trim();
+  const fresh = result && result.source === text.trim() && result.sourceLang === sourceLang;
   return (
     <div className="crew2-own" aria-label="Announcement in your own words">
       <div className="crew2-own__label" lang="en">
@@ -400,7 +402,13 @@ function OwnAnnouncement({ tablet }: { tablet: CrewTabletApi }) {
             </label>
           ))}
         </span>
-        <textarea value={text} maxLength={300} rows={2} onChange={(e) => setText(e.target.value)} placeholder="例: まもなく着陸します。お手洗いは今のうちにお済ませください。" />
+        <label>
+          Announcement language
+          <select value={sourceLang} onChange={event => setSourceLang(event.target.value as LangCode)} disabled={phase !== 'idle'}>
+            {LANGUAGES.map(language => <option key={language.code} value={language.code}>{language.nativeName} · {language.englishName}</option>)}
+          </select>
+        </label>
+        <textarea lang={sourceLang} value={text} maxLength={300} rows={2} onChange={(e) => setText(e.target.value)} placeholder={sourceLang === 'ja' ? '例: まもなく着陸します。お手洗いは今のうちにお済ませください。' : 'Type an announcement in the selected language.'} />
       </div>
       <div className="crew2-own__row">
         <button className="crew2-own__btn" onClick={phase === 'listening' ? () => void hear() : () => void listen()} disabled={phase === 'hearing' || phase === 'translating'}>
@@ -420,18 +428,19 @@ function OwnAnnouncement({ tablet }: { tablet: CrewTabletApi }) {
           <small lang="en">Every seat will see its own language, marked machine-translated (not checked):</small>
           <ul className="crew2-own__langs">
             {Object.entries(result.texts)
-              .filter(([l]) => l !== 'ja')
+              .filter(([l]) => l !== result.sourceLang)
               .map(([l, t]) => (
                 <li key={l}>
                   <b lang="en">{languageName(l)}</b> <span lang={l}>{t}</span>
                 </li>
               ))}
           </ul>
+          {result.failed.length > 0 && <p className="crew2-note" role="alert">Translation unavailable for {result.failed.map(languageName).join(', ')}. These passengers will see a fallback language. Retry translation before sending if their language is needed.</p>}
           <button
             className="crew2-reply t-positive"
             disabled={sent}
             onClick={() => {
-              tablet.announceText({ sender, original: result.source, texts: result.texts });
+              tablet.announceText({ sender, original: result.source, sourceLang: result.sourceLang, texts: result.texts });
               setSent(true);
             }}
           >

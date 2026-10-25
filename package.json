@@ -15,6 +15,7 @@
     "check": "node scripts/online.mjs --check",
     "benchmark:translation": "tsx apps/hub/src/scripts/benchmark-online.ts",
     "hub": "npm run start -w @hearme/hub",
+    "phone-link": "node scripts/phone-link.mjs",
     "models": "npm run models -w @hearme/hub",
     "eval": "npm run eval -w @hearme/hub",
     "lab-report": "npm run lab-report -w @hearme/hub",

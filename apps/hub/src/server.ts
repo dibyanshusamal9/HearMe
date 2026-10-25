@@ -20,6 +20,8 @@ export interface PublicUrls {
   lan: string[];
   /** Direct passenger browser origin; local certificates use the existing HTTP listener. */
   passengerBase?: string;
+  /** Active private HTTPS passenger entry link, when the optional phone tunnel is running. */
+  phoneLink?: string;
   /**
    * Plain-http page that installs the hub's root certificate on a phone and
    * then opens the app (set when phones may need to install it first).
@@ -31,6 +33,11 @@ export interface PublicUrls {
 
 /** Open the passenger web app immediately, without a certificate or app installation step. */
 export function joinUrl(urls: PublicUrls, seat: string): string {
+  if (urls.phoneLink) {
+    const phone = new URL(urls.phoneLink);
+    phone.searchParams.set('seat', seat);
+    return phone.href;
+  }
   const app = `/mobile/?seat=${encodeURIComponent(seat)}`;
   const base = urls.passengerBase ?? (urls.trust ? new URL(urls.trust).origin : urls.base);
   return `${base}${app}`;
@@ -403,7 +410,7 @@ export function createHandler(opts: HandlerOptions) {
     }
     if (path === '/api/announce/translate' && req.method === 'POST') {
       // The captain's or crew's own words for everyone on board: one machine translation per language
-      // on the passenger list or in today's requests (Hindi and English always), labelled so on every seat.
+      // offered by the passenger picker, including seats that changed language without sending a request.
       const body = await readBody(req, MAX_JSON_BYTES);
       let input: { text?: unknown; from?: unknown };
       try {
@@ -415,7 +422,7 @@ export function createHandler(opts: HandlerOptions) {
       if (!from || typeof input.text !== 'string' || !input.text.trim() || input.text.length > 300) return json(res, 400, { error: 'invalid request' });
       const text = input.text.trim();
       if (req.headers['x-hearme-mode'] === 'online' && req.headers['x-hearme-cloud-consent'] !== 'yes') throw new ProviderError('Explicit cloud consent is required for Online mode.', 428);
-      const langs = new Set<string>(['hi', 'en']);
+      const langs = new Set<string>(LANGUAGES.map(language => language.code));
       for (const seat of manifestSeats()) {
         const p = lookupBooking(seat);
         if (p) langs.add(p.lang);
@@ -425,14 +432,20 @@ export function createHandler(opts: HandlerOptions) {
       const t0 = Date.now();
       const texts: Record<string, string> = { [from]: text };
       const failed: string[] = [];
-      for (const lang of langs) {
+      const targets = [...langs].map(lang => ({ lang, online: onlineFor(req, from, lang) }));
+      const translate = async ({ lang, online }: typeof targets[number]) => {
         try {
-          texts[lang] = await (onlineFor(req, from, lang)?.translator ?? opts.ai).translate(text, from, lang);
+          const translated = await (online?.translator ?? opts.ai).translate(text, from, lang);
+          if (!translated.trim()) throw new Error('empty translation');
+          texts[lang] = translated;
         } catch {
           failed.push(lang);
         }
-      }
-      return json(res, 200, { texts, failed, ms: Date.now() - t0, machine: true });
+      };
+      // Cloud translation has its own bounded work pool; keep local model calls serial.
+      await Promise.all(targets.filter(target => target.online).map(translate));
+      for (const target of targets.filter(target => !target.online)) await translate(target);
+      return json(res, 200, { texts, failed, sourceLang: from, ms: Date.now() - t0, machine: true });
     }
     if (path === '/api/translate/warm' && req.method === 'POST') {
       opts.ai.warmTranslator();
