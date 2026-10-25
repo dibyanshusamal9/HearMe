@@ -2,6 +2,18 @@ import { CONFIDENCE_THRESHOLD } from '../matching/matcher';
 import type { MatchResult } from '../matching/matcher';
 import type { UnderstoodRequests } from '../matching/requests';
 import type { PassengerSession } from '../session/session';
+import type { RequestSource } from '../types';
+
+/** Forward only requests explicitly identified as outside the catalogue by online analysis. */
+export function submitUncategorized(session: PassengerSession, transcript: string, source: RequestSource, match: MatchResult, many?: UnderstoodRequests): boolean {
+  const said = transcript.trim().slice(0, 300);
+  if (source === 'tap' || !said || !many?.other?.english) return false;
+  const result = session.submit({ needId: 'call_crew', source, understanding: {
+    confidence: match.confidence, viaPictures: false, said,
+    ...(many?.other?.english ? { english: many.other.english } : {}),
+  } });
+  return result.ok || result.reason === 'duplicate';
+}
 
 /** Submit only explicit, confidently recognized catalogue needs; refusals always win. */
 export function autoSubmitSpeech(session: PassengerSession, match: MatchResult, many?: UnderstoodRequests): number {

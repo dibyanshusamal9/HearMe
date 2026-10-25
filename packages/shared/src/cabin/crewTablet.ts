@@ -171,7 +171,8 @@ export class CrewTablet implements CrewTabletApi {
           const { type: _type, ...rest } = m;
           const req: CrewRequest = { ...rest, receivedAt: this.now(), status: 'new' };
           this.update({ ...this.state, requests: [req, ...this.state.requests] });
-          if (this.state.autoReply) this.scheduleAuto(req);
+          // Online free-text fallbacks need a human response, even in the auto-reply demo.
+          if (this.state.autoReply && !req.understanding?.english) this.scheduleAuto(req);
         }
         // Always confirm receipt (also for retries of a request we already have).
         this.bus.post({ type: 'request.received', requestId: m.requestId, seat: m.seat });

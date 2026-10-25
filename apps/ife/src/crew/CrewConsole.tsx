@@ -595,12 +595,14 @@ function RequestCard({ r, active, onClick }: { r: CrewRequest; active: boolean; 
       <span className="crew2-card__icon">{need && <NeedIcon name={r.medical ? 'stethoscope' : need.icon} size="100%" />}</span>
       <span className="crew2-card__text">
         <b>
-          {need?.private && <Lock aria-label="private" />} {need?.label.ja}
+          {need?.private && <Lock aria-label="private" />} {r.understanding?.english ? 'その他のリクエスト' : need?.label.ja}
         </b>
         <small lang="en">
-          {need?.label.en}
+          {r.understanding?.english ? 'Other request' : need?.label.en}
           {r.purposeId ? ` · ${getPurpose(r.purposeId)?.label.en}` : ''}
         </small>
+        {r.understanding?.english && <small lang="en">{r.understanding.english}</small>}
+        {r.understanding?.english && <small lang="en">Passenger words · machine translation</small>}
       </span>
       <span className="crew2-card__meta" lang="en">
         <span className="crew2-lang">{r.spokenLang ? languageName(r.spokenLang) : LANG_JA[r.lang]}</span>
@@ -631,10 +633,10 @@ function Detail({ r, tablet, viaHub }: { r: CrewRequest; tablet: CrewTabletApi; 
         )}
         <div>
           <div className="crew2-d__ja">
-            {need?.private && <Lock aria-label="private" />} {need?.label.ja}
+            {need?.private && <Lock aria-label="private" />} {r.understanding?.english ? 'その他のリクエスト' : need?.label.ja}
           </div>
           <div className="crew2-d__en" lang="en">
-            {need?.label.en}
+            {r.understanding?.english ? 'Other request · outside predefined categories' : need?.label.en}
           </div>
           {purpose && (
             <div className="crew2-d__purpose">
@@ -809,14 +811,15 @@ function VoiceReply({ r, tablet }: { r: CrewRequest; tablet: CrewTabletApi }) {
 }
 
 /**
- * What a passenger said when HearMe could not match it and they called the
- * crew instead: their words, and the same translated offline on the hub into
- * Japanese and English, so the crew member walks up knowing what it is about.
+ * Uncategorized passenger words, automatically forwarded to the crew. English
+ * comes with online extraction; Japanese uses
+ * the existing local translator when the request is opened.
  * Without the translator the original still shows.
  */
 function PassengerWords({ r, said }: { r: CrewRequest; said: string }) {
   const from = r.spokenLang ?? r.lang;
-  const [out, setOut] = useState<{ ja?: string; en?: string; error?: string } | null>(null);
+  const english = r.understanding?.english;
+  const [out, setOut] = useState<{ ja?: string; en?: string; error?: string } | null>(english ? { en: english } : null);
   useEffect(() => {
     let live = true;
     const to = async (lang: 'ja' | 'en') => {
@@ -825,21 +828,23 @@ function PassengerWords({ r, said }: { r: CrewRequest; said: string }) {
       if (!res.ok || !body.text) throw new Error(body.error ?? 'translation failed');
       return body.text;
     };
-    // One after the other: the hub translates one sentence at a time.
+    setOut(english ? { en: english } : null);
+    // English first: a slow/unavailable Japanese model must not hide English.
     void (async () => {
-      try {
-        const ja = await to('ja');
-        if (live) setOut({ ja });
-        const en = await to('en');
-        if (live) setOut({ ja, en });
-      } catch (e) {
-        if (live) setOut((o) => ({ ...o, error: e instanceof Error ? e.message : String(e) }));
+      for (const lang of ['en', 'ja'] as const) {
+        if (lang === 'en' && english) continue;
+        try {
+          const text = from === lang ? said : await to(lang);
+          if (live) setOut(o => ({ ...o, [lang]: text }));
+        } catch {
+          if (live) setOut(o => ({ ...o, error: 'Some translations are unavailable. The original request is shown above.' }));
+        }
       }
     })();
     return () => {
       live = false;
     };
-  }, [said, from]);
+  }, [said, from, english]);
   return (
     <div className="crew2-said">
       <div className="crew2-said__label">
@@ -852,7 +857,7 @@ function PassengerWords({ r, said }: { r: CrewRequest; said: string }) {
       {out?.ja && <p lang="ja">{out.ja}</p>}
       {out?.en && <p lang="en">{out.en}</p>}
       {!out && <p lang="en">Translating…</p>}
-      {out?.error && !out.ja && <p lang="en">Could not translate ({out.error}). Show the passenger the pictures, or reply with your own words below.</p>}
+      {out?.error && <p lang="en">{out.error} Reply with your own words below, or visit the passenger.</p>}
     </div>
   );
 }

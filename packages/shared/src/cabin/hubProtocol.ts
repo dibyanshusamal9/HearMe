@@ -116,7 +116,8 @@ function parseUnderstanding(v: unknown): Understanding | undefined | null {
   if (v === undefined) return undefined;
   if (!isObj(v) || typeof v.confidence !== 'number' || typeof v.viaPictures !== 'boolean') return null;
   const said = typeof v.said === 'string' ? v.said.trim().slice(0, 300) : '';
-  return { confidence: Math.max(0, Math.min(1, v.confidence)), viaPictures: v.viaPictures, ...(said ? { said } : {}) };
+  const english = typeof v.english === 'string' ? v.english.trim().slice(0, 600) : '';
+  return { confidence: Math.max(0, Math.min(1, v.confidence)), viaPictures: v.viaPictures, ...(said ? { said, ...(english ? { english } : {}) } : {}) };
 }
 
 function parseMedical(v: unknown): MedicalReport | undefined | null {

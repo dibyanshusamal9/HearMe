@@ -104,11 +104,12 @@ export interface Understanding {
   /** True when the passenger had to pick from the "Did you mean?" pictures. */
   viaPictures: boolean;
   /**
-   * The passenger's own words, as heard or typed. Sent only when nothing
-   * matched and they called the crew instead, so the crew can read them
-   * machine-translated rather than arrive knowing nothing.
+   * The passenger's own words when the request is outside the catalogue,
+   * or they explicitly chose to send their words to the crew.
    */
   said?: string;
+  /** English machine translation of `said`, when already available. */
+  english?: string;
 }
 
 /** Care Mode: where it hurts, how much, what else. Shown to crew in Japanese + English. */

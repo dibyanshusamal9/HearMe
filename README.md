@@ -11,6 +11,7 @@ Passengers can tap a picture, type, or speak in their language. Crew receive a c
 - **Online / Offline switch** on the right of each interface. Pages start offline; cloud processing requires explicit opt-in.
 - **Automatic submission after speech:** a pause ends recording and confidently understood requests submit automatically in both modes. Uncertain requests retain clarification pictures; pictures and typing retain manual review.
 - **Online voice:** Sarvam Saaras for transcription, Groq for catalogue keyword extraction, Sarvam translation and Bulbul v3 for spoken replies.
+- **Online requests outside the catalogue:** Groq identifies uncategorized requests and automatically forwards the passenger's original words and English translation to the crew as **Other request**. This reuses the translation already made for analysis, with no extra translation call. Offline mode keeps the original clarification flow.
 - **Other Asian languages stay local**, including Japanese, Thai, Indonesian and Vietnamese.
 - **Announcements follow the passenger's language** for both captions and voice, including after a language change. All seven fixed announcements have captions in every selectable language.
 - **Recorded announcement audio in all 15 languages**, including Japanese, Thai, Indonesian and Vietnamese. Fixed announcements play bundled MP3s without needing an installed device voice or a live speech-provider request.

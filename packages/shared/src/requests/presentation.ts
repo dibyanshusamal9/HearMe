@@ -36,7 +36,8 @@ export function describeStatus(r: PassengerRequest, lang: LangCode): StatusView 
 }
 
 /** "Hot water · to take medicine" in the given language. */
-export function requestTitle(r: Pick<PassengerRequest, 'needId' | 'purposeId'>, lang: LangCode): string {
+export function requestTitle(r: Pick<PassengerRequest, 'needId' | 'purposeId' | 'understanding'>, lang: LangCode): string {
+  if (r.understanding?.english && r.understanding.said) return r.understanding.said;
   const need = getNeed(r.needId);
   const base = need ? needLabel(need, lang) : r.needId;
   const purpose = getPurpose(r.purposeId);

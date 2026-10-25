@@ -13,6 +13,7 @@ import {
   type UnderstoodRequests,
   understandRequests,
   autoSubmitSpeech,
+  submitUncategorized,
   SpeechPauseDetector,
   getProcessingMode,
   usesOnline,
@@ -50,7 +51,10 @@ export function useRouteTranscript() {
     const hub = getHubUrl();
     // One call: the hub matches the sentence, and each part of it when it holds several requests or refuses something.
     const understood = fromHub?.match ? fromHub : hub ? ((await matchOnHub(hub, transcript, { lang })) ?? undefined) : undefined;
-    if (source === 'speech' && autoSubmitSpeech(session, understood?.match ?? defaultMatcher.match(transcript), understood?.many)) {
+    const match = understood?.match ?? defaultMatcher.match(transcript);
+    const otherSubmitted = usesOnline(session.getState().profile?.speechLang ?? lang) && submitUncategorized(session, transcript, source, match, understood?.many);
+    const catalogSubmitted = source === 'speech' ? autoSubmitSpeech(session, match, understood?.many) : 0;
+    if (otherSubmitted || catalogSubmitted) {
       nav.close(); nav.setTab('requests'); return;
     }
     if (mayHoldSeveral(transcript)) {

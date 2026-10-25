@@ -170,7 +170,9 @@ export class PassengerSession {
     if (!need) return { ok: false, reason: 'unknown_need' };
     const purposeId = input.purposeId && need.purposes?.includes(input.purposeId) ? input.purposeId : undefined;
     const open = this.state.requests.find(
-      (r) => r.needId === input.needId && (r.status === 'pending' || r.status === 'sent'),
+      (r) => r.needId === input.needId && (r.status === 'pending' || r.status === 'sent') &&
+        (input.needId !== 'call_crew' || (!r.understanding?.english && !input.understanding?.english) ||
+          (!!r.understanding?.english === !!input.understanding?.english && (r.understanding?.said ?? '').trim() === (input.understanding?.said ?? '').trim())),
     );
     if (open) return { ok: false, reason: 'duplicate' };
 

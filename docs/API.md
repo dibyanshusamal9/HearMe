@@ -12,3 +12,5 @@ Original endpoint contracts are retained. Requests default to the original offli
 - Former `/api/assistant*` POSTs return 410. No wake listener or chat endpoints remain active.
 
 Supported cloud language codes: `hi en bn ta pa mr gu kn ml or te`; `or` maps to Sarvam `od-IN`. Japanese, Thai, Indonesian and Vietnamese always use the local engine, even in Online mode. Raw provider errors and credentials are never returned.
+
+For Online passenger understanding/matching, `many.other` is either `null` or `{text, english}` for a wanted request outside the catalogue. The client forwards it over the existing seat-scoped `request.create` message using `needId: call_crew` and `understanding: {confidence, viaPictures: false, said, english}`. `said` is capped at 300 characters and the English machine translation at 600. Crew receive both with the request; no separate translation round trip is needed. This automatic fallback applies only to Online processing. Ordinary offline requests retain their existing contract and behavior.

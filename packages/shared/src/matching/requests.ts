@@ -286,6 +286,8 @@ export interface UnderstoodRequests {
   requests: UnderstoodRequest[];
   /** Needs the passenger said they do not want. */
   refused: string[];
+  /** A wanted request outside the catalogue; keep the whole utterance as context. */
+  other?: { text: string; english?: string } | null;
 }
 
 /** A part matched only by meaning (no keyword) must be this sure to count as its own request. */
