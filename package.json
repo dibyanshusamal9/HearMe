@@ -1,0 +1,32 @@
+{
+  "name": "hearme",
+  "private": true,
+  "version": "0.1.0",
+  "description": "HearMe: online and offline multilingual passenger and cabin crew communication",
+  "engines": { "node": ">=22" },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "demo": "node scripts/demo.mjs",
+    "start": "node scripts/demo.mjs --no-open",
+    "online": "node scripts/online.mjs",
+    "check": "node scripts/online.mjs --check",
+    "benchmark:translation": "tsx apps/hub/src/scripts/benchmark-online.ts",
+    "hub": "npm run start -w @hearme/hub",
+    "models": "npm run models -w @hearme/hub",
+    "eval": "npm run eval -w @hearme/hub",
+    "lab-report": "npm run lab-report -w @hearme/hub",
+    "dev": "npm run dev -w @hearme/ife",
+    "mobile": "npm run start -w @hearme/mobile",
+    "mobile:web": "npm run web -w @hearme/mobile",
+    "build:mobile-web": "npm run export:web -w @hearme/mobile",
+    "build": "npm run build:mobile-web && npm run build -w @hearme/ife",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present --",
+    "preview": "npm run preview -w @hearme/ife",
+    "record-demo": "npm run record-demo -w @hearme/hub",
+    "languages": "npm run languages -w @hearme/hub"
+  }
+}

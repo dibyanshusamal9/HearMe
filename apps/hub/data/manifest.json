@@ -1,0 +1,98 @@
+{
+  "note": "Sample passenger list for the demo flight (Tokyo-bound, rows 21-31). In production the hub receives this from the airline's departure control system before departure: language preference (including pack languages such as Bengali and Punjabi) plus PNR special service codes (SSR/OSI).",
+  "flight": "DEMO 830 · DEL → NRT",
+  "passengers": [
+    {
+      "seat": "23C",
+      "lang": "hi",
+      "name": "शारदा",
+      "tags": [
+        "senior",
+        "hard_of_hearing"
+      ],
+      "ssr": [
+        "DEAF",
+        "OSI LANG HI"
+      ]
+    },
+    {
+      "seat": "31A",
+      "lang": "vi",
+      "name": "Hùng",
+      "tags": [
+        "senior",
+        "medical"
+      ],
+      "ssr": [
+        "DIAB",
+        "OSI LANG VI"
+      ]
+    },
+    {
+      "seat": "21A",
+      "lang": "th",
+      "tags": [],
+      "ssr": [
+        "OSI LANG TH"
+      ]
+    },
+    {
+      "seat": "22E",
+      "lang": "id",
+      "tags": [
+        "travelling_with_child"
+      ],
+      "ssr": [
+        "CHLD",
+        "OSI LANG ID"
+      ]
+    },
+    {
+      "seat": "24B",
+      "lang": "en",
+      "tags": [
+        "wheelchair"
+      ],
+      "ssr": [
+        "WCHR"
+      ]
+    },
+    {
+      "seat": "25F",
+      "lang": "ja",
+      "tags": [],
+      "ssr": []
+    },
+    {
+      "seat": "26D",
+      "lang": "hi",
+      "tags": [
+        "low_vision"
+      ],
+      "ssr": [
+        "BLND",
+        "OSI LANG HI"
+      ]
+    },
+    {
+      "seat": "22B",
+      "lang": "bn",
+      "name": "Rahim",
+      "tags": [],
+      "ssr": [
+        "OSI LANG BN"
+      ]
+    },
+    {
+      "seat": "27D",
+      "lang": "pa",
+      "name": "ਗੁਰਪ੍ਰੀਤ",
+      "tags": [
+        "senior"
+      ],
+      "ssr": [
+        "OSI LANG PA"
+      ]
+    }
+  ]
+}

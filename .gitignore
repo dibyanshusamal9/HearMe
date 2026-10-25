@@ -1,0 +1,28 @@
+node_modules/
+dist/
+.expo/
+web-build/
+apps/ife/public/mobile/
+*.tsbuildinfo
+.DS_Store
+coverage/
+
+# HearMe hub: downloaded AI models, generated certificates, demo recordings
+apps/hub/.models/
+apps/hub/.cert/
+apps/hub/.eval/
+
+# HearMe hub: generated story voice (macOS say) and voice lab results
+apps/hub/.cache/
+apps/hub/.lab/
+
+# Local npm cache and design-tool scratch files
+.npm-cache/
+.impeccable/hook.cache.json
+
+# Secrets (API keys) stay on the machine that uses them
+.env
+.env.*
+!.env.example
+.local-backups/
+HearMe-main/

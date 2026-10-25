@@ -1,0 +1,8 @@
+{
+  "name": "JAL-inspired HearMe",
+  "mode": "operate",
+  "colors": { "primary": "#C8102E", "text": "#242424", "background": "#F7F7F5", "surface": "#FFFFFF", "muted": "#626262", "border": "#D8D8D5" },
+  "typography": { "web": "Noto Sans", "native": "platform dynamic type", "wordmark": "official image asset" },
+  "controls": { "browserRadiusRange": [8, 12], "sharedRadius": { "sm": 8, "md": 14, "lg": 20, "pill": 999 }, "mobileTouchMin": 56, "ifeTouchMin": 88, "crewReplyMin": 56 },
+  "source": "User-directed Japan Airlines IFE theme"
+}

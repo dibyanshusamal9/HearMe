@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">
+  <title>HearMe architecture: passenger devices and crew tablet connected through an offline cabin hub</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 10 5 0 10z" fill="#ff8a65"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="560" rx="24" fill="#0b1630"/>
+  <text x="40" y="58" fill="#fff" font-size="30" font-weight="800">Hear<tspan fill="#ff8a65">Me</tspan> · inside the plane, no internet</text>
+
+  <!-- Passenger side -->
+  <g>
+    <rect x="40" y="100" width="290" height="170" rx="18" fill="#13213f" stroke="#2a3a5c"/>
+    <text x="62" y="138" fill="#fff" font-size="20" font-weight="700">Passenger phone</text>
+    <text x="62" y="166" fill="#c9d4ea" font-size="15">Web app from the seat QR (PWA)</text>
+    <text x="62" y="190" fill="#c9d4ea" font-size="15">Tap · speak · type · Care Mode</text>
+    <text x="62" y="214" fill="#c9d4ea" font-size="15">Replies on screen and read aloud</text>
+    <text x="62" y="246" fill="#ff8a65" font-size="14" font-weight="700">Hindi · Thai · Vietnamese · …</text>
+
+    <rect x="40" y="300" width="290" height="150" rx="18" fill="#13213f" stroke="#2a3a5c"/>
+    <text x="62" y="338" fill="#fff" font-size="20" font-weight="700">Seatback screen (IFE)</text>
+    <text x="62" y="366" fill="#c9d4ea" font-size="15">Pictures, no app, no microphone</text>
+    <text x="62" y="390" fill="#c9d4ea" font-size="15">Stores nothing, clears itself</text>
+    <text x="62" y="426" fill="#ff8a65" font-size="14" font-weight="700">or the printed seat card</text>
+  </g>
+
+  <!-- Hub -->
+  <g>
+    <rect x="420" y="100" width="360" height="350" rx="22" fill="#fff"/>
+    <text x="446" y="140" fill="#0b1630" font-size="22" font-weight="800">Cabin hub</text>
+    <text x="446" y="164" fill="#42506d" font-size="14">a laptop standing in for the crew tablet</text>
+    <g font-size="15" font-weight="600">
+      <rect x="446" y="184" width="308" height="44" rx="12" fill="#eef2f8"/>
+      <text x="462" y="212" fill="#0b1630">Whisper-small · speech → text</text>
+      <rect x="446" y="238" width="308" height="44" rx="12" fill="#eef2f8"/>
+      <text x="462" y="266" fill="#0b1630">Keywords + sound-alike + e5</text>
+      <rect x="446" y="292" width="308" height="44" rx="12" fill="#fde7df"/>
+      <text x="462" y="320" fill="#0b1630">Trained head → 1 of 40 needs</text>
+      <rect x="446" y="346" width="308" height="44" rx="12" fill="#eef2f8"/>
+      <text x="462" y="374" fill="#0b1630">WebSocket relay · seat-scoped</text>
+    </g>
+    <text x="446" y="424" fill="#42506d" font-size="13">ONNX on CPU · offline · audio never stored</text>
+  </g>
+
+  <!-- Crew -->
+  <g>
+    <rect x="870" y="100" width="290" height="350" rx="18" fill="#13213f" stroke="#2a3a5c"/>
+    <text x="892" y="138" fill="#fff" font-size="20" font-weight="700">Crew tablet</text>
+    <text x="892" y="166" fill="#c9d4ea" font-size="15">Requests by seat, in Japanese</text>
+    <text x="892" y="190" fill="#c9d4ea" font-size="15">Urgent medical first, in red</text>
+    <text x="892" y="214" fill="#c9d4ea" font-size="15">One-tap verified replies</text>
+    <text x="892" y="238" fill="#c9d4ea" font-size="15">…or say it in Japanese</text>
+    <text x="892" y="262" fill="#c9d4ea" font-size="15">Captions to every seat</text>
+    <text x="892" y="286" fill="#c9d4ea" font-size="15">Live numbers · flight report</text>
+    <text x="892" y="426" fill="#ff8a65" font-size="14" font-weight="700">日本語 · English</text>
+  </g>
+
+  <!-- Links -->
+  <g stroke="#ff8a65" stroke-width="3" fill="none" marker-end="url(#arrow)" marker-start="url(#arrow)">
+    <path d="M332 185 H416"/>
+    <path d="M332 375 H416"/>
+    <path d="M784 275 H866"/>
+  </g>
+  <text x="374" y="172" fill="#9fb0d0" font-size="12" text-anchor="middle">HTTPS + WSS</text>
+  <text x="374" y="362" fill="#9fb0d0" font-size="12" text-anchor="middle">cabin Wi-Fi</text>
+  <text x="825" y="262" fill="#9fb0d0" font-size="12" text-anchor="middle">WebSocket</text>
+
+  <text x="40" y="510" fill="#c9d4ea" font-size="16">Only meaning travels: need, purpose, seat, language, confidence. Unsure (&lt; 85%) → “Did you mean?” pictures.</text>
+</svg>

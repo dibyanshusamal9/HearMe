@@ -1,0 +1,43 @@
+{
+  "name": "@hearme/hub",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "HearMe cabin hub: the crew tablet service (offline speech AI, request list, cabin WebSocket) that phones, seatback screens and the crew console connect to.",
+  "scripts": {
+    "start": "tsx src/main.ts",
+    "dev": "tsx watch src/main.ts",
+    "models": "tsx src/scripts/download-models.ts",
+    "eval": "tsx src/scripts/eval.ts",
+    "lab-report": "tsx src/scripts/lab-report.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "rescore": "tsx src/scripts/rescore.ts",
+    "record-demo": "tsx src/scripts/record-demo.ts",
+    "train": "tsx src/scripts/train-head.ts",
+    "a11y": "tsx src/scripts/a11y.ts",
+    "zeroshot": "tsx src/scripts/zeroshot.ts",
+    "chart": "tsx src/scripts/chart.ts",
+    "add-language": "tsx src/scripts/add-language.ts",
+    "multi": "tsx src/scripts/multi.ts",
+    "languages": "tsx src/scripts/languages.ts",
+    "draft-languages": "tsx src/scripts/draft-languages.ts"
+  },
+  "dependencies": {
+    "@hearme/shared": "*",
+    "@huggingface/transformers": "^4.3.1",
+    "@peculiar/x509": "^1.14.3",
+    "qrcode": "^1.5.4",
+    "selfsigned": "^5.5.0",
+    "ws": "^8.22.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "@types/qrcode": "^1.5.6",
+    "@types/ws": "^8.18.2",
+    "axe-core": "^4.14.0",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.3",
+    "vitest": "^5.0.5"
+  }
+}
