@@ -259,6 +259,20 @@ export async function loadOrCreateCert(lan: string[]): Promise<HubCertificate> {
   return { ...saved(), source: 'local-ca', caPem: ca.certPem, caName: caName(ca.certPem), caFingerprint: caFp, hosts, notAfter: readMeta()!.until };
 }
 
+/** Renew a running local hub's leaf certificate after a Wi-Fi address change. */
+export async function refreshLocalCertificate(
+  current: HubCertificate,
+  lan: string[],
+  apply: (certificate: Pick<HubCertificate, 'key' | 'cert'>) => void,
+): Promise<HubCertificate> {
+  // Supplied production certificates are managed by their operator.
+  if (current.source === 'custom') return current;
+  if (current.notAfter > Date.now() + 30 * DAY && wantedHosts(lan).every(host => current.hosts.includes(host))) return current;
+  const updated = await loadOrCreateCert(lan);
+  apply({ key: updated.key, cert: updated.cert });
+  return updated;
+}
+
 /**
  * An iOS configuration profile that installs the root (unsigned, so iOS
  * labels it "Not Verified"). Same identifier per root, so installing again

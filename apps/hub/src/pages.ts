@@ -116,7 +116,7 @@ export function trustPage(info: TrustPageInfo): string {
   const data = JSON.stringify({ secureBase: info.secureBase, next: info.next, source: info.source }).replace(/</g, '\\u003c');
   const nothingToInstall = info.source === 'custom' && !info.caFingerprint;
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>HearMe · Trust this hub</title><style>${BASE_CSS}
+  <title>HearMe · Set up voice</title><style>${BASE_CSS}
   body{padding:18px;max-width:560px;margin:0 auto;line-height:1.45}
   h1{font-size:25px;margin:10px 0 4px;letter-spacing:-.01em}
   .lead{color:#46546B;margin:0 0 14px}
@@ -132,8 +132,8 @@ export function trustPage(info: TrustPageInfo): string {
   [hidden]{display:none!important}
   </style></head><body>
   <div class="brand" style="font-size:22px">Hear<span>Me</span></div>
-  <h1>Use the microphone without a warning screen</h1>
-  <p class="lead">Phones only allow the microphone on secure pages. This hub has its own certificate. Install it once on this phone, then HearMe opens securely, with no “Not private” screen.</p>
+  <h1>Set up voice on this phone</h1>
+  <p class="lead">Your cabin connection and microphone access are separate. Phone browsers need a secure HTTPS page to use the microphone. This page checks the secure connection and shows any setup needed for this local demo.</p>
 
   <div id="checking" class="box">Checking the secure connection to the hub…</div>
   <div id="trusted" class="box ok" hidden><b>✓ This phone already trusts the hub.</b> Opening HearMe…<a class="btn primary" id="open1" href="#">Open HearMe</a></div>
@@ -178,7 +178,7 @@ export function trustPage(info: TrustPageInfo): string {
     ${shortFp ? `<p>Its fingerprint (SHA-256), also printed in the laptop's terminal:<br><span class="fp">${esc(fp)}</span></p>` : ''}
     <p><b>Remove it after the event.</b> iPhone: Settings → General → VPN &amp; Device Management → HearMe demo hub → Remove Profile. Android: Settings → Encryption &amp; credentials → User credentials → remove HearMe.</p></details>
     <details><summary>Skip this</summary>
-    <p>Tap pictures and typing work without it: <a href="/mobile/?seat=${esc(seatFrom(info.next))}">open HearMe without the microphone</a>. Or open the secure page and accept the warning (Advanced → Continue).</p></details>
+    <p>Tap pictures and typing work without it: <a href="/mobile/?seat=${esc(seatFrom(info.next))}">open HearMe without the microphone</a>.</p></details>
   </div>
   </div>
   <script>

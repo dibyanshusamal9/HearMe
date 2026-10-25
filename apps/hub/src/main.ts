@@ -19,7 +19,7 @@ import { fileURLToPath } from 'node:url';
 import QRCode from 'qrcode';
 import { WebSocketServer } from 'ws';
 import { AiEngine } from './ai';
-import { loadOrCreateCert, mkcertCaRoot, type HubCertificate } from './cert';
+import { loadOrCreateCert, mkcertCaRoot, refreshLocalCertificate, type HubCertificate } from './cert';
 import { asrSizeFromEnv, inferenceThreads } from './models';
 import { lanAddresses } from './net';
 import { CabinRelay } from './relay';
@@ -47,13 +47,15 @@ const ai = new AiEngine({ asrSize: asrSizeFromEnv(), threads: inferenceThreads()
 const online = new OnlineService();
 const relay = new CabinRelay();
 // HEARME_HOST picks the address phones should use when the laptop has several (Wi-Fi, Ethernet, VPN, Docker…).
-const lan = [...new Set([process.env.HEARME_HOST, ...lanAddresses()].filter((h): h is string => !!h))];
+const currentAddresses = () => [...new Set([process.env.HEARME_HOST, ...lanAddresses()].filter((h): h is string => !!h))];
+const lan = currentAddresses();
 let httpsOk = false;
 let certificate: HubCertificate | null = null;
+let certificateWatch: ReturnType<typeof setInterval> | undefined;
 const urls = (): PublicUrls => {
   // Wi-Fi/hotspot addresses can change while the demo is running. Status is
   // polled by IFE screens, so rebuild advertised URLs from the current network.
-  const currentLan = [...new Set([process.env.HEARME_HOST, ...lanAddresses()].filter((h): h is string => !!h))];
+  const currentLan = currentAddresses();
   const host = currentLan[0] ?? 'localhost';
   const http = `http://${host}:${HTTP_PORT}`;
   const base = httpsOk ? `https://${host}:${HTTPS_PORT}` : http;
@@ -90,6 +92,21 @@ try {
     httpsServer.listen(HTTPS_PORT, '0.0.0.0', () => ok());
   });
   httpsOk = true;
+  let refreshing = false;
+  certificateWatch = setInterval(async () => {
+    if (refreshing || !certificate) return;
+    refreshing = true;
+    try {
+      const updated = await refreshLocalCertificate(certificate, currentAddresses(), next => httpsServer.setSecureContext(next));
+      if (updated !== certificate) console.log('  HTTPS certificate updated for the current Wi-Fi addresses.');
+      certificate = updated;
+    } catch (error) {
+      console.warn(`HTTPS certificate refresh failed: ${error instanceof Error ? error.message : String(error)}`);
+    } finally {
+      refreshing = false;
+    }
+  }, 5000);
+  certificateWatch.unref();
 } catch (e) {
   console.warn(`HTTPS not available (${String(e)}). Phones will not be able to use the microphone.`);
 }
@@ -136,6 +153,7 @@ if (process.argv.includes('--open')) {
 }
 
 const stop = () => {
+  clearInterval(certificateWatch);
   relay.close();
   process.exit(0);
 };

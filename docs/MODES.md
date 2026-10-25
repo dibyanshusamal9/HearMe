@@ -24,6 +24,12 @@ The retired Tara screen, wake phrase and chat/follow-up flow are removed. Keep t
 
 ## Setup and checks
 
+Phone microphone access requires **trusted HTTPS** in both modes. Being connected to the cabin hub over plain HTTP lets requests and replies work, but the phone browser still blocks its microphone. If voice reports that the page needs to be secure, tap **Set up voice on this phone**. The setup page keeps your seat and opens the HTTPS app after the phone trusts the local demo hub's certificate. Allow microphone access when the browser asks. Use Chrome on Android or Safari on iPhone rather than a QR scanner's embedded browser.
+
+For a local demonstration, the hub's `/trust` page provides device-specific certificate instructions. A deployed cabin hub should use a publicly trusted certificate via `HEARME_TLS_CERT` and `HEARME_TLS_KEY`, so passengers need no certificate setup. Microphone permission and a secure page are browser requirements, even in Offline mode.
+
+The running hub refreshes its local server certificate when Wi-Fi addresses change, retaining the same root certificate. Reopen the current phone link if the laptop changes networks. Custom production certificates remain operator-managed.
+
 Keep `SARVAM_API_KEY` and `GROQ_API_KEY` in the root `.env`; restart the hub after editing them. Keys never enter browser or Expo public configuration. Run `npm run demo` for original setup, or `npm run hub` when models and clients are already built. `npm run check` checks configuration without paid calls.
 
 Run `npm run typecheck`, `npm test -- --maxWorkers=1 --pool=threads` and `npm run build`. Native Android/iOS runtime has not been exercised; the original native speech adapter remains simulated. Live microphone and Bulbul behavior is implemented in the browser phone and seatback.

@@ -18,7 +18,7 @@ import {
   usesOnline,
 } from '@hearme/shared';
 import { useProcessingMode } from '@hearme/shared/react';
-import { MicUnavailableError } from '@hearme/shared/web';
+import { microphoneErrorKey, MicUnavailableError } from '@hearme/shared/web';
 import Mic from 'lucide-react-native/icons/mic';
 import Square from 'lucide-react-native/icons/square';
 import { useEffect, useRef, useState } from 'react';
@@ -26,7 +26,7 @@ import { AccessibilityInfo, ActivityIndicator, Platform, Pressable, Text, View }
 import { useNav } from '../nav';
 import { clipRecognizer, currentSpeech, getHubUrl, inStage, session } from '../runtime';
 import { useTheme } from '../theme';
-import { T } from './ui';
+import { Btn, T } from './ui';
 
 type Phase = 'idle' | 'listening' | 'processing';
 
@@ -77,8 +77,8 @@ export function useRouteTranscript() {
 /**
  * Hold-to-speak. Press and hold, speak, release. A short tap keeps listening
  * until a second tap (easier for people who cannot hold a button), and with a
- * screen reader one tap starts and the next stops. Speech recognition is
- * SIMULATED (MockSpeechRecognizer): no microphone access, nothing is recorded.
+ * screen reader one tap starts and the next stops. With a cabin hub, browser
+ * recordings use the selected processing mode; disconnected demos are simulated.
  */
 export function HoldToSpeak({ lang }: { lang: LangCode }) {
   const mode = useProcessingMode();
@@ -95,6 +95,7 @@ export function HoldToSpeak({ lang }: { lang: LangCode }) {
   const [db, setDb] = useState(0);
   const [tapMode, setTapMode] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [needsSecurePage, setNeedsSecurePage] = useState(false);
   const [progress, setProgress] = useState<Progress | null>(null);
   const [, setTick] = useState(0);
   // The demo stage can play a recording in place of the microphone (see below).
@@ -120,6 +121,7 @@ export function HoldToSpeak({ lang }: { lang: LangCode }) {
     const speech = override.current ?? currentSpeech();
     setTapMode(false);
     setError(null);
+    setNeedsSecurePage(false);
     startedAt.current = Date.now();
     recordingMode.current = getProcessingMode();
     recordingId.current++;
@@ -132,7 +134,8 @@ export function HoldToSpeak({ lang }: { lang: LangCode }) {
       if (phaseRef.current === 'listening' && pause.current?.update(level, Date.now()) && !override.current) finishCurrent.current();
     })).catch((e: unknown) => {
       setPhase('idle');
-      setError(e instanceof MicUnavailableError && e.reason !== 'denied' ? tr('speech.needsHub') : tr('speech.micDenied'));
+      setError(tr(microphoneErrorKey(e)));
+      setNeedsSecurePage(e instanceof MicUnavailableError && e.reason === 'insecure');
     });
   };
 
@@ -296,6 +299,18 @@ export function HoldToSpeak({ lang }: { lang: LangCode }) {
         <T v="caption" color={th.p.danger} role="alert" live="assertive">
           {error}
         </T>
+      )}
+      {error && phase === 'idle' && needsSecurePage && Platform.OS === 'web' && (
+        <Btn
+          label={tr('speech.openVoiceSetup')}
+          variant="secondary"
+          onPress={() => {
+            const page = (globalThis as { location?: Location }).location;
+            if (!page) return;
+            const next = page.pathname + page.search + page.hash;
+            page.assign(`/trust?next=${encodeURIComponent(next)}`);
+          }}
+        />
       )}
       <Pressable
         onPressIn={pressIn}

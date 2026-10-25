@@ -5,12 +5,12 @@ import type { AddressInfo } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import * as x509 from '@peculiar/x509';
-import { afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
 // Keep certificates out of the real apps/hub/.cert, and do not depend on whether mkcert is installed.
 process.env.HEARME_CERT_DIR = mkdtempSync(join(tmpdir(), 'hearme-cert-'));
 process.env.HEARME_CERT = 'local';
-const { createLocalCa, fingerprint, issueServerCert, loadOrCreateCert, mobileconfig, pemToDer, wantedHosts } = await import('../src/cert');
+const { createLocalCa, fingerprint, issueServerCert, loadOrCreateCert, mobileconfig, pemToDer, refreshLocalCertificate, wantedHosts } = await import('../src/cert');
 const { createHandler, joinUrl, safeNext } = await import('../src/server');
 const { AiEngine } = await import('../src/ai');
 const { CabinRelay } = await import('../src/relay');
@@ -71,6 +71,21 @@ describe('built-in local CA (mkcert-style)', () => {
 });
 
 describe('loadOrCreateCert', () => {
+  it('updates the running TLS server after an address change without replacing the root', async () => {
+    const original = await loadOrCreateCert(['192.168.1.20']);
+    const apply = vi.fn();
+    expect(await refreshLocalCertificate(original, ['192.168.1.20'], apply)).toBe(original);
+    expect(apply).not.toHaveBeenCalled();
+    const moved = await refreshLocalCertificate(original, ['10.104.145.31'], apply);
+    expect(moved.caFingerprint).toBe(original.caFingerprint);
+    expect(apply).toHaveBeenCalledWith({ key: moved.key, cert: moved.cert });
+    const cert = new x509.X509Certificate(moved.cert);
+    const addresses = ext(cert, x509.SubjectAlternativeNameExtension)!.names.toJSON().map(name => name.value);
+    expect(addresses).toContain('10.104.145.31');
+    expect(await refreshLocalCertificate({ ...moved, source: 'custom' }, ['10.0.0.8'], apply)).toMatchObject({ source: 'custom' });
+    expect(apply).toHaveBeenCalledOnce();
+  }, 60_000);
+
   it('keeps the root when the Wi-Fi address changes, so phones never re-install', async () => {
     const first = await loadOrCreateCert(['192.168.1.20']);
     expect(first.source).toBe('local-ca');
@@ -145,6 +160,18 @@ describe('trust page and downloads', () => {
     await start(false);
     expect((await fetch(`${base}/trust/hearme-ca.crt`)).status).toBe(404);
     expect(await (await fetch(`${base}/trust`)).text()).toContain('without HTTPS');
+  });
+
+  it('offers voice setup for a connected HTTP phone and keeps its seat on HTTPS', async () => {
+    await start(true);
+    const next = '/mobile/?seat=31A';
+    const page = await (await fetch(`${base}/trust?next=${encodeURIComponent(next)}`)).text();
+    expect(page).toContain('Set up voice on this phone');
+    expect(page).toContain('"secureBase":"https://192.168.1.20:8443"');
+    expect(page).toContain('"next":"/mobile/?seat=31A"');
+    expect(page).toContain('Your cabin connection and microphone access are separate');
+    expect(page).toContain('/trust/hearme-ca.crt');
+    expect(page).not.toContain('Advanced → Continue');
   });
 
   it('opens the browser app directly without requiring certificate installation', () => {

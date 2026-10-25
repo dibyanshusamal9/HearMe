@@ -1,6 +1,7 @@
 import { floatToPcm16, levelDb, resampleTo16k, understandSpeech, type UnderstandProgress, type UnderstandResult, type UnderstandTarget } from '../cabin/hubClient';
 import type { SpeechRecognizer } from '../cabin/speech';
 import type { LangCode } from '../types';
+import type { StringKey } from '../i18n/strings';
 
 /**
  * Browser microphone → cabin hub speech recognition.
@@ -13,8 +14,19 @@ import type { LangCode } from '../types';
  */
 
 export class MicUnavailableError extends Error {
-  constructor(readonly reason: 'denied' | 'unsupported' | 'insecure') {
+  constructor(readonly reason: 'denied' | 'unsupported' | 'insecure' | 'no-hub') {
     super(`microphone ${reason}`);
+  }
+}
+
+/** Report browser microphone restrictions separately from a missing cabin hub. */
+export function microphoneErrorKey(error: unknown): StringKey {
+  if (!(error instanceof MicUnavailableError)) return 'speech.error';
+  switch (error.reason) {
+    case 'insecure': return 'speech.needsSecure';
+    case 'unsupported': return 'speech.micUnsupported';
+    case 'denied': return 'speech.micDenied';
+    case 'no-hub': return 'speech.needsHub';
   }
 }
 
@@ -128,7 +140,7 @@ export class HubSpeechRecognizer implements SpeechRecognizer {
 
   async start(lang: string, onLevel: (db: number) => void): Promise<void> {
     this.lang = lang;
-    if (!this.hubUrl()) throw new MicUnavailableError('unsupported');
+    if (!this.hubUrl()) throw new MicUnavailableError('no-hub');
     await this.recorder.start(onLevel);
   }
 
